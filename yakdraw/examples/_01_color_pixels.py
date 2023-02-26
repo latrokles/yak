@@ -30,4 +30,4 @@ class ColorPixels(Sketch):
           
 
 def main():
-    ColorPixels(600, 400, 3, title='ColorPixels')
+    ColorPixels(600, 400, 1, title='ColorPixels')

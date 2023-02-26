@@ -9,8 +9,8 @@ from yakdraw.sketch import Sketch
 from yakdraw.window import Mouse
 
 
-WIDTH = 640
-HEIGHT = 480
+WIDTH = 320
+HEIGHT = 240
 SCALE = 2
 
 

@@ -32,12 +32,10 @@ class Mouse:
 class Window:
     def __init__(self, title: str, width: int, height: int, scale: int, color_format: ColorFmt):
         self.title = title
-        self.w = width
-        self.h = height
+        self.w = width * scale
+        self.h = height * scale
         self.scale = scale
-        self.fb = Framebuffer(self.w // self.scale,
-                              self.h // self.scale,
-                              color_format)
+        self.fb = Framebuffer(width, height, color_format)
 
         self.win = None
         self.renderer = None
@@ -122,13 +120,37 @@ class Window:
         left, middle, right = False, False, False
 
         if mouse_evt.type in (sdl2.SDL_MOUSEBUTTONDOWN, sdl2.SDL_MOUSEBUTTONUP):
+            # we care about the following attributes:
+            # - x: x position
+            # - y: y position
+            # - state: SDL_Pressed or SDL_RELEASED
+            # - button: the button being pressed or released (see below for vals)
+            # - clicks: the number of clicks
+            #
+            # buttons
+            # 1 = left
+            # 2 = middle
+            # 3 = right
             data = mouse_evt.button
-            print(f'x={data.x}, y={data.y}, state={data.state}, button={data.button}, clicks={data.clicks}')
             return
             
         if mouse_evt.type == sdl2.SDL_MOUSEMOTION:
+            # we care about the following attributes:
+            # - x: x position
+            # - y: y position
+            # - state: the mouse button state (see below for values)
+            #
+            # state
+            # 1 = left
+            # 2 = middle
+            # 4 = right
+
+            # combinations are a mask of the above OR'd
+            # 3 = left and middle   (1 | 2)
+            # 5 = left and right    (1 | 4)
+            # 6 = middle and right  (2 | 4)
+            # 7 = all three buttons (1 | 2 | 4)
             data = mouse_evt.motion
-            print(f'x={data.x}, y={data.y}, state={data.state}')
 
             # TODO set the proper buttons
             if data.state == sdl2.SDL_PRESSED:
