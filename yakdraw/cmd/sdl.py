@@ -43,7 +43,7 @@ def test():
     fb = Framebuffer(FB_WIDTH, FB_HEIGHT, ColorFmt.RGBA)
     for y in range(FB_HEIGHT):
         for x in range(FB_WIDTH):
-            fb.put_pixel(x, y, Palette.WHITE)  
+            fb.put_pixel(x, y, Palette.WHITE)
 
     while True:        
         event = sdl2.SDL_Event()
