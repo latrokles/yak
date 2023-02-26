@@ -2,6 +2,11 @@ import ctypes
 import sdl2
 import sys
 
+
+from yakdraw.color import ColorFmt, Palette
+from yakdraw.fb import Framebuffer
+
+
 WIN_WIDTH = 640
 WIN_HEIGHT = 480
 
@@ -35,18 +40,12 @@ def test():
                                      FB_WIDTH,
                                      FB_HEIGHT)
 
-    # fb = bytearray([0xFF]*FB_WIDTH*FB_HEIGHT*4)
-    fb = bytearray(FB_WIDTH * FB_HEIGHT * 4)
+    fb = Framebuffer(FB_WIDTH, FB_HEIGHT, ColorFmt.RGBA)
     for y in range(FB_HEIGHT):
-        for x in range(FB_WIDTH):    
-            pix = (x * 4) + (y * FB_WIDTH * 4)
-            fb[pix] = 0xff
-            fb[pix + 1] = 0xff
-            fb[pix + 2] = 0xff
-            fb[pix + 3] = 0xff
+        for x in range(FB_WIDTH):
+            fb.put_pixel(x, y, Palette.WHITE)  
 
     while True:        
-
         event = sdl2.SDL_Event()
         while sdl2.SDL_PollEvent(event) != 0:
             if event.type == sdl2.SDL_QUIT:
@@ -56,23 +55,14 @@ def test():
                 x = event.button.x
                 y = event.button.y
 
-                # get pixel position in framebuffer
-                pix = (x * 4) + (y * FB_WIDTH * 4)
-
-                # make it blue
-                fb[pix] = 0xff
-                fb[pix + 1] = 0xff
-                fb[pix + 2] = 0x00
-                fb[pix + 3] = 0x00
+                fb.put_pixel(x, y, Palette.BLUE1)
          
         # copy framebuffer to texture and render it in sdl window
-        # 1. get a pointer to the framebuffer memory (can't avoid C eh?)
-        fb_pointer = (ctypes.c_char * len(fb)).from_buffer(fb)
 
-        # 2. copy framebuffer into texture
-        sdl2.SDL_UpdateTexture(texture, None, fb_pointer, FB_WIDTH * 4)
+        # 1. copy framebuffer into texture
+        sdl2.SDL_UpdateTexture(texture, None, fb.memory(), FB_WIDTH * 4)
 
-        # 3. display the texture in sdl window
+        # 2. display the texture in sdl window
         sdl2.SDL_RenderClear(renderer)
         sdl2.SDL_RenderCopy(renderer, texture, None, None)
         sdl2.SDL_RenderPresent(renderer)
