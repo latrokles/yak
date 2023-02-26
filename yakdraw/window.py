@@ -1,6 +1,9 @@
+import dataclasses
 import sdl2
 
-from yakdraw.color import ColorFmt, Palette
+from typing import Callable
+
+from yakdraw.color import ColorFmt
 from yakdraw.fb import Framebuffer
 
 
@@ -10,15 +13,31 @@ YAK_2_SDL_FORMAT = {
 }
 
 
+def map_colorformat(yak_format: ColorFmt) -> int:
+    sdl_fmt = YAK_2_SDL_FORMAT.get(yak_format)
+    if sdl_fmt is None:
+        raise RuntimeError(f'There is no sdl mapping for fmt={yak_format}')
+    return sdl_fmt
+
+
+@dataclasses.dataclass
+class Mouse:
+    x: int
+    y: int
+    left: bool = False
+    middle: bool = False
+    right: bool = False
+    
+
 class Window:
-    def __init__(self, title: str, width: int,height: int, scaling: int = 1):
+    def __init__(self, title: str, width: int, height: int, scale: int, color_format: ColorFmt):
         self.title = title
         self.w = width
         self.h = height
-        self.scale = scaling
+        self.scale = scale
         self.fb = Framebuffer(self.w // self.scale,
                               self.h // self.scale,
-                              ColorFmt.RGBA)
+                              color_format)
 
         self.win = None
         self.renderer = None
@@ -26,6 +45,10 @@ class Window:
 
         self.active = False
         self.exit_signalled = False
+        self.mouse_handlers = []
+
+    def register_mouse_handler(self, handler: Callable[[Mouse], None]) -> None:
+        self.mouse_handlers.append(handler)
 
     def open(self) -> None:
         if sdl2.SDL_Init(sdl2.SDL_INIT_VIDEO) < 0:
@@ -47,25 +70,22 @@ class Window:
         sdl2.render.SDL_RenderSetIntegerScale(self.renderer, 1)
 
         self.texture = sdl2.SDL_CreateTexture(self.renderer,
-                                              YAK_2_SDL_FORMAT.get(self.fb.fmt),
+                                              map_colorformat(self.fb.fmt),
                                               sdl2.SDL_TEXTUREACCESS_STREAMING,
                                               self.fb.w,
                                               self.fb.h)
         self.active = True
-        self.run()
 
-    def run(self) -> None:
-        # TODO remove this fill after we can write programs that reuse this
-        for y in range(self.fb.h):
-            for x in range(self.fb.w):
-                self.fb.put_pixel(x, y, Palette.WHITE)
- 
+    def run(self, sketch) -> None:
+        sketch.setup()
         while self.active:
             self._handle_events()
             if self.exit_signalled:
                 break
 
+            sketch.draw()
             self._render()
+        sketch.exit()
         self.close()
 
     def close(self) -> None:
@@ -93,20 +113,27 @@ class Window:
             self.exit_signalled = True
             return
 
-        if event.type in (sdl2.SDL_MOUSEBUTTONUP, sdl2.SDL_MOUSEBUTTONDOWN):
-            self._on_mouse_button_action(event.button)
+        if event.type in (sdl2.SDL_MOUSEBUTTONUP, sdl2.SDL_MOUSEBUTTONDOWN, sdl2.SDL_MOUSEMOTION):
+            self._on_mouse_action(event)
             return
 
-        if event.type == sdl2.SDL_MOUSEMOTION:
-            self._on_mouse_motion(event.motion)
+    def _on_mouse_action(self, mouse_evt: sdl2.events.SDL_Event) -> None:
+        x, y = -1, -1
+        left, middle, right = False, False, False
+
+        if mouse_evt.type in (sdl2.SDL_MOUSEBUTTONDOWN, sdl2.SDL_MOUSEBUTTONUP):
+            data = mouse_evt.button
+            print(f'x={data.x}, y={data.y}, state={data.state}, button={data.button}, clicks={data.clicks}')
             return
+            
+        if mouse_evt.type == sdl2.SDL_MOUSEMOTION:
+            data = mouse_evt.motion
+            print(f'x={data.x}, y={data.y}, state={data.state}')
 
-    def _on_mouse_button_action(self, mouse: sdl2.events.SDL_Event) -> None:
-        pass
+            # TODO set the proper buttons
+            if data.state == sdl2.SDL_PRESSED:
+                left = True
 
-    def _on_mouse_motion(self, mouse: sdl2.events.SDL_Event) -> None:
-        if mouse.state == sdl2.SDL_PRESSED:
-            # this is a stand-in for now...
-            # TODO replace when we can register handlers
-            x, y = mouse.x, mouse.y
-            self.fb.put_pixel(x, y, Palette.BLUE1)
+            mouse = Mouse(data.x, data.y, left)
+            for handler in self.mouse_handlers:
+                handler(mouse)

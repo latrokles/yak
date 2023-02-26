@@ -2,14 +2,29 @@ import ctypes
 import sdl2
 import sys
 
+from dataclasses import dataclass
 
-from yakdraw.window import Window
+from yakdraw.color import Palette
+from yakdraw.sketch import Sketch
+from yakdraw.window import Mouse
 
 
-WIN_WIDTH = 640
-WIN_HEIGHT = 480
+WIDTH = 640
+HEIGHT = 480
 SCALE = 2
 
+
+@dataclass
+class SdlTestSketch(Sketch):
+    def setup(self):
+        for y in range(self.height):
+            for x in range(self.width):
+                self.canvas.put_pixel(x, y, Palette.WHITE)
+
+    def handle_mouse(self, mouse: Mouse):
+        if mouse.left:
+            self.canvas.put_pixel(mouse.x, mouse.y, Palette.BLUE)
+            return
+
 def test():
-    window = Window('sdltest', WIN_WIDTH, WIN_HEIGHT, SCALE)
-    window.open()
+    SdlTestSketch(WIDTH, HEIGHT, SCALE, title='sdltestsketch')
