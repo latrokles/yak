@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import random
+
 from dataclasses import dataclass
 from enum import Enum
 
@@ -314,3 +316,17 @@ class Palette:
     GREY85 = Color.from_hexstr("dadada")
     GREY89 = Color.from_hexstr("e4e4e4")
     GREY93 = Color.from_hexstr("eeeeee")
+
+    @staticmethod
+    def named_values() -> dict[str, Color]:
+        return {name: value for
+                name, value in vars(Palette).items()
+                if (type(value) is Color)}
+
+    @staticmethod
+    def values() -> list[Color]:
+        return list(Palette.named_values().values())
+
+    @staticmethod
+    def random() -> Color:
+        return random.choice(Palette.values())

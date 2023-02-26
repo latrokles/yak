@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 from random import randint
 
-from yakdraw.color import Color, Palette
+from yakdraw.color import Palette
 from yakdraw.sketch import Sketch
 from yakdraw.window import Mouse
 
@@ -19,14 +19,10 @@ class ColorPixels(Sketch):
                   self.canvas.put_pixel(x, y, Palette.WHITE)
 
       def draw(self):
-          r = randint(0, 255)
-          g = randint(0, 255)
-          b = randint(0, 255)
-
           x = randint(0, self.width)
           y = randint(0, self.height)
 
-          self.canvas.put_pixel(x, y, Color(r, g, b))
+          self.canvas.put_pixel(x, y, Palette.random())
           
 
 def main():
