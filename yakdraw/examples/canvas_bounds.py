@@ -1,17 +1,7 @@
-import ctypes
-import sdl2
-import sys
-
 from dataclasses import dataclass
 
 from yakdraw.color import Color, Palette
 from yakdraw.sketch import Sketch
-from yakdraw.window import Mouse
-
-
-WIDTH = 320
-HEIGHT = 240
-SCALE = 2
 
 
 @dataclass
@@ -29,7 +19,3 @@ class CanvasBounds(Sketch):
         self.canvas.put_pixel(self.width - self.margin, self.margin, self.stroke)
         self.canvas.put_pixel(self.margin, self.height - self.margin, self.stroke)
         self.canvas.put_pixel(self.width - self.margin, self.height - self.margin, self.stroke)
-
-
-def main():
-    CanvasBounds(WIDTH, HEIGHT, SCALE, title='CanvasBounds')

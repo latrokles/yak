@@ -1,9 +1,4 @@
-import ctypes
-import sdl2
-import sys
-
 from dataclasses import dataclass, field
-from random import randint
 
 from yakdraw.color import Palette
 from yakdraw.draw import draw_line
@@ -11,13 +6,8 @@ from yakdraw.sketch import Sketch
 from yakdraw.window import Mouse
 
 
-WIDTH = 300
-HEIGHT = 300
-SCALE = 2
-
-
 @dataclass
-class Lines3(Sketch):
+class Linepen(Sketch):
     points: list[tuple[int, int]] = field(default_factory=list)
 
     def setup(self):
@@ -39,7 +29,3 @@ class Lines3(Sketch):
     def handle_mouse(self, mouse: Mouse):
         if mouse.left:
             self.points.append((mouse.x, mouse.y))
-
-
-def main():
-    Lines3(WIDTH, HEIGHT, SCALE, title='lines2')

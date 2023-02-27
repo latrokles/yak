@@ -5,6 +5,7 @@ from yakdraw.color import Palette
 from yakdraw.sketch import Sketch
 from yakdraw.window import Mouse
 
+
 @dataclass
 class ColorPixels(Sketch):
 
@@ -23,7 +24,3 @@ class ColorPixels(Sketch):
           y = randint(0, self.height)
 
           self.canvas.put_pixel(x, y, Palette.random())
-          
-
-def main():
-    ColorPixels(600, 400, 1, title='ColorPixels')

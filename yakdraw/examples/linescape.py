@@ -1,23 +1,12 @@
-import ctypes
-import sdl2
-import sys
-
 from dataclasses import dataclass
-from random import randint
 
 from yakdraw.color import Palette
 from yakdraw.draw import draw_line
 from yakdraw.sketch import Sketch
-from yakdraw.window import Mouse
-
-
-WIDTH = 300
-HEIGHT = 300
-SCALE = 2
 
 
 @dataclass
-class Lines2(Sketch):
+class Linescape(Sketch):
     margin: int = 20
 
     def setup(self):
@@ -69,6 +58,3 @@ class Lines2(Sketch):
             draw_line(self.canvas, x0, y0, x1, y1, Palette.random())
             x0 += 10
             y1 -= 10
-
-def main():
-    Lines2(WIDTH, HEIGHT, SCALE, title='lines2')
