@@ -3,7 +3,8 @@
 > **Warning**
 >
 > **DO NOT USE**
-> **this 2D graphics "library" is for personal learning purposes.**
+>
+> **This 2D graphics "library" is for personal learning purposes.**
 
 This repository tracks some personal experiments with 2D graphics, mainly implementing some basic 2D graphics primitives and a simple software based 2D raster graphics library.
 
