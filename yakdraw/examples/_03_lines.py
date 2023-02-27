@@ -11,8 +11,8 @@ from yakdraw.sketch import Sketch
 from yakdraw.window import Mouse
 
 
-WIDTH = 320
-HEIGHT = 240
+WIDTH = 300
+HEIGHT = 300
 SCALE = 2
 
 
@@ -25,11 +25,11 @@ class Lines(Sketch):
                 self.canvas.put_pixel(x, y, Palette.WHITE)
 
     def draw(self) -> None:
-        x = randint(0, self.width)
-        y = randint(0, self.height)
+        x = randint(20, self.width - 20)
+        y = randint(20, self.height - 20)
 
-        x1 = randint(0, self.width)
-        y1 = randint(0, self.height)
+        x1 = randint(20, self.width - 20)
+        y1 = randint(20, self.height - 20)
 
         draw_line(self.canvas, x, y, x1, y1, Palette.random())
 

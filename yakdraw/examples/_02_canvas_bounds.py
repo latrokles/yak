@@ -17,6 +17,7 @@ SCALE = 2
 @dataclass
 class CanvasBounds(Sketch):
     stroke: Color = Palette.RED
+    margin: int = 20
 
     def setup(self):
         for y in range(self.height):
@@ -24,10 +25,10 @@ class CanvasBounds(Sketch):
                 self.canvas.put_pixel(x, y, Palette.WHITE)
 
     def draw(self) -> None:
-        self.canvas.put_pixel(5, 5, self.stroke)
-        self.canvas.put_pixel(315, 5, self.stroke)
-        self.canvas.put_pixel(5, 235, self.stroke)
-        self.canvas.put_pixel(315, 235, self.stroke)
+        self.canvas.put_pixel(self.margin, self.margin, self.stroke)
+        self.canvas.put_pixel(self.width - self.margin, self.margin, self.stroke)
+        self.canvas.put_pixel(self.margin, self.height - self.margin, self.stroke)
+        self.canvas.put_pixel(self.width - self.margin, self.height - self.margin, self.stroke)
 
 
 def main():
