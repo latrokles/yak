@@ -21,27 +21,28 @@ def draw_line(canvas, x0, y0, x1, y1, color):
     else:
         x_step = 1
 
-    dy = 2*dy  # anywhere not python this can be replaced with a left shift (dy <<= 1)
-    dx = 2* dx # same as above
+    dy = 2 * dy
+    dx = 2 * dx
 
-    canvas.put_pixel(x0, y0, color)
-
+    draw_point(canvas, x0, y0, color)
     if dx > dy:
         fraction = 2 * dy - dx
         while x0 != x1:
             if fraction >= 0:
-                y0 += x_step
+                y0 += y_step
                 fraction -= dx
 
             x0 += x_step
             fraction += dy
-            canvas.put_pixel(x0, y0, color)
+            draw_point(canvas, x0, y0, color)
+
     else:
         fraction = 2 * dx - dy
         while y0 != y1:
             if fraction >= 0:
                 x0 += x_step
                 fraction -= dy
+
             y0 += y_step
             fraction += dx
-            canvas.put_pixel(x0, y0, color)
+            draw_point(canvas, x0, y0, color)
