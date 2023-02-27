@@ -1,10 +1,12 @@
+from yakdraw.color import Color
+from yakdraw.fb import Framebuffer
 
 
-def draw_point(canvas, x, y, color):
-    canvas.put_pixel(x, y, color)
+def draw_point(fb: Framebuffer, x: int, y: int, color: Color):
+    fb.put_pixel(x, y, color)
 
 
-def draw_line(canvas, x0, y0, x1, y1, color):
+def draw_line(fb: Framebuffer, x0: int, y0: int, x1: int, y1: int, color: Color):
     dx = x1 - x0
     dy = y1 - y0
 
@@ -24,7 +26,7 @@ def draw_line(canvas, x0, y0, x1, y1, color):
     dy = 2 * dy
     dx = 2 * dx
 
-    draw_point(canvas, x0, y0, color)
+    draw_point(fb, x0, y0, color)
     if dx > dy:
         fraction = 2 * dy - dx
         while x0 != x1:
@@ -34,7 +36,7 @@ def draw_line(canvas, x0, y0, x1, y1, color):
 
             x0 += x_step
             fraction += dy
-            draw_point(canvas, x0, y0, color)
+            draw_point(fb, x0, y0, color)
 
     else:
         fraction = 2 * dx - dy
@@ -45,4 +47,4 @@ def draw_line(canvas, x0, y0, x1, y1, color):
 
             y0 += y_step
             fraction += dx
-            draw_point(canvas, x0, y0, color)
+            draw_point(fb, x0, y0, color)
