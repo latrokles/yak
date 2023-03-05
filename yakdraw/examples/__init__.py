@@ -1,8 +1,11 @@
 import sys
 
+from yakdraw.examples.bugfinder import BugFinder
 from yakdraw.examples.canvas_bounds import CanvasBounds
 from yakdraw.examples.color_pixels import ColorPixels
 from yakdraw.examples.linescape import Linescape
+from yakdraw.examples.mouse_circles import MouseCircles
+from yakdraw.examples.random_circles import RandomCircles
 from yakdraw.examples.random_lines import RandomLines
 from yakdraw.examples.simple_linepen import Linepen
 
@@ -12,8 +15,12 @@ options = {
                     lambda: ColorPixels(600, 400, 1, title='ColorPixels')),
     'canvasbounds': ('test canvas coordinate system',
                      lambda: CanvasBounds(320, 280, 2, title='CanvasBounds')),
+    'mousecircle': ('mouse and circle drawing',
+                    lambda: MouseCircles(300, 300, 2, title='circles')),
     'randomlines': ('line drawing and palette selection',
                     lambda: RandomLines(300, 300, 2, title='random lines')),
+    'randomcircles': ('circle drawing',
+                      lambda: RandomCircles(300, 300, 2, title='random circles')),
     'linescape': ('more line drawing',
                   lambda: Linescape(300, 300, 2, title='linescape')),
     'linepen': ('simple line "pen"',

@@ -1,3 +1,5 @@
+import math
+
 from yakdraw.color import Color
 from yakdraw.fb import Framebuffer
 
@@ -48,3 +50,25 @@ def draw_line(fb: Framebuffer, x0: int, y0: int, x1: int, y1: int, color: Color)
             y0 += y_step
             fraction += dx
             draw_point(fb, x0, y0, color)
+
+
+def draw_rect(fb: Framebuffer, x: int, y: int, w: int, h: int, color: Color) -> None:
+    draw_line(fb, x, y, x + w, y, color)
+    draw_line(fb, x, y, x, y + h, color)
+    draw_line(fb, x + w, y + h, x + w, y, color)
+    draw_line(fb, x + w, y + h, x, y + h, color)
+
+
+def draw_circle(fb: Framebuffer, center_x: int, center_y: int, r: int, color: Color) -> None:
+    angle = 0
+    step = 2 * math.pi / 100
+
+    px = x = int(center_x + (r * math.cos(angle)))
+    py = y = int(center_y - (r * math.sin(angle)))
+
+    while angle <= (2 * math.pi):
+        px, py = x, y
+        x = int(center_x + (r * math.cos(angle)))
+        y = int(center_y - (r * math.sin(angle)))
+        angle += step
+        draw_line(fb, px, py, x, y, color)
