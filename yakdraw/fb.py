@@ -38,10 +38,10 @@ class Framebuffer:
         :raises RuntimeError: if `x` and/or `y` values are out of bounds.
         """
 
-        if (x < 0) or (x > self.w):
+        if (x < 0) or (x >= self.w):
             raise RuntimeError(f'x={x} is out of framebuffer bounds')
 
-        if (y <0) or (y > self.h):
+        if (y <0) or (y >= self.h):
             raise RuntimeError(f'y={y} is out of framebuffer bounds')
             
         pixel_0 = (y * (self.w * self.depth)) + (x * self.depth)
@@ -65,10 +65,10 @@ class Framebuffer:
 
         :returns: None.
         """
-        if (x < 0) or (x > self.w):
+        if (x < 0) or (x >= self.w):
             return
 
-        if (y < 0) or (y > self.h):
+        if (y < 0) or (y >= self.h):
             return
 
         pixel_0 = (y * (self.w * self.depth)) + (x * self.depth)
