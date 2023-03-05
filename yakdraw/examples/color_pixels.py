@@ -9,9 +9,9 @@ from yakdraw.window import Mouse
 @dataclass
 class ColorPixels(Sketch):
 
-      def handle_mouse(self, mouse: Mouse):
-          if mouse.left:
-             self.canvas.put_pixel(mouse.x, mouse.y, Palette.BLUE)
+      def mouse_updated(self):
+          if self.mouse.left:
+             self.canvas.put_pixel(self.mouse.x, self.mouse.y, Palette.BLUE)
              return
 
       def setup(self):

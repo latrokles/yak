@@ -22,12 +22,21 @@ def map_colorformat(yak_format: ColorFmt) -> int:
 
 @dataclasses.dataclass
 class Mouse:
-    x: int
-    y: int
+    x: int = 0
+    y: int = 0
+    px: int = 0
+    py: int = 0
     left: bool = False
     middle: bool = False
     right: bool = False
-    
+
+    def move(self, x: int, y: int) -> None:
+        self.px, self.py = self.x, self.y
+        self.x, self.y = x, y
+
+    def moved(self) -> bool:
+        return self.x, self.y != self.px, self.py
+
 
 class Window:
     def __init__(self, title: str, width: int, height: int, scale: int, color_format: ColorFmt):
@@ -40,6 +49,8 @@ class Window:
         self.win = None
         self.renderer = None
         self.texture = None
+
+        self.mouse = Mouse()
 
         self.active = False
         self.exit_signalled = False
@@ -111,51 +122,48 @@ class Window:
             self.exit_signalled = True
             return
 
-        if event.type in (sdl2.SDL_MOUSEBUTTONUP, sdl2.SDL_MOUSEBUTTONDOWN, sdl2.SDL_MOUSEMOTION):
-            self._on_mouse_action(event)
+        if event.type == sdl2.SDL_MOUSEBUTTONDOWN:
+            self._mouse_down(event.button.button)
+            self._signal_mouse_event()
             return
 
-    def _on_mouse_action(self, mouse_evt: sdl2.events.SDL_Event) -> None:
-        x, y = -1, -1
-        left, middle, right = False, False, False
-
-        if mouse_evt.type in (sdl2.SDL_MOUSEBUTTONDOWN, sdl2.SDL_MOUSEBUTTONUP):
-            # we care about the following attributes:
-            # - x: x position
-            # - y: y position
-            # - state: SDL_Pressed or SDL_RELEASED
-            # - button: the button being pressed or released (see below for vals)
-            # - clicks: the number of clicks
-            #
-            # buttons
-            # 1 = left
-            # 2 = middle
-            # 3 = right
-            data = mouse_evt.button
+        if event.type == sdl2.SDL_MOUSEBUTTONUP:
+            self._mouse_up(event.button.button)
+            self._signal_mouse_event()
             return
-            
-        if mouse_evt.type == sdl2.SDL_MOUSEMOTION:
-            # we care about the following attributes:
-            # - x: x position
-            # - y: y position
-            # - state: the mouse button state (see below for values)
-            #
-            # state
-            # 1 = left
-            # 2 = middle
-            # 4 = right
 
-            # combinations are a mask of the above OR'd
-            # 3 = left and middle   (1 | 2)
-            # 5 = left and right    (1 | 4)
-            # 6 = middle and right  (2 | 4)
-            # 7 = all three buttons (1 | 2 | 4)
-            data = mouse_evt.motion
+        if event.type == sdl2.SDL_MOUSEMOTION:
+            self._mouse_moved(event.motion.x, event.motion.y)
+            self._signal_mouse_event()
+            return
 
-            # TODO set the proper buttons
-            if data.state == sdl2.SDL_PRESSED:
-                left = True
+    def _mouse_down(self, button: int) -> None:
+        if button == 1:
+            self.mouse.left = True
+            return
 
-            mouse = Mouse(data.x, data.y, left)
-            for handler in self.mouse_handlers:
-                handler(mouse)
+        if button == 2:
+            self.mouse.middle = True
+            return
+
+        if button == 3:
+            self.mouse.right = True
+
+    def _mouse_up(self, button: int) -> None:
+        if button == 1:
+            self.mouse.left = False
+            return
+
+        if button == 2:
+            self.mouse.middle = False
+            return
+
+        if button == 3:
+            self.mouse.right = False
+
+    def _mouse_moved(self, x: int, y: int) -> None:
+        self.mouse.move(x, y)
+
+    def _signal_mouse_event(self) -> None:
+        for handler in self.mouse_handlers:
+             handler()

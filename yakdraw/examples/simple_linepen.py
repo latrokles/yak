@@ -26,6 +26,6 @@ class Linepen(Sketch):
             draw_line(self.canvas, x0, y0, x1, y1, Palette.RED)
             p0 = p1
 
-    def handle_mouse(self, mouse: Mouse):
-        if mouse.left:
-            self.points.append((mouse.x, mouse.y))
+    def mouse_updated(self):
+        if self.mouse.left:
+            self.points.append((self.mouse.x, self.mouse.y))
