@@ -1,7 +1,7 @@
 from dataclasses import dataclass, field
 
 from yak.color import Palette
-from yak.draw import draw_line
+from yak.draw import background, draw_line
 from yak.sketch import Sketch
 from yak.window import Mouse
 
@@ -11,9 +11,7 @@ class Linepen(Sketch):
     points: list[tuple[int, int]] = field(default_factory=list)
 
     def setup(self):
-        for y in range(self.height):
-            for x in range(self.width):
-                self.canvas.put_pixel(x, y, Palette.WHITE)
+        background(self.canvas, Palette.WHITE)
 
     def draw(self):
         if len(self.points) == 0:

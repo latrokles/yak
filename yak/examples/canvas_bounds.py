@@ -1,6 +1,7 @@
 from dataclasses import dataclass, field
 
 from yak.color import Color, Palette
+from yak.draw import background, draw_point
 from yak.sketch import Sketch
 
 
@@ -11,12 +12,10 @@ class CanvasBounds(Sketch):
 
     def setup(self):
         self.stroke = Palette.RED1
-        for y in range(self.height):
-            for x in range(self.width):
-                self.canvas.put_pixel(x, y, Palette.WHITE)
+        background(self.canvas, Palette.WHITE)
 
     def draw(self) -> None:
-        self.canvas.put_pixel(self.margin, self.margin, self.stroke)
-        self.canvas.put_pixel(self.width - self.margin, self.margin, self.stroke)
-        self.canvas.put_pixel(self.margin, self.height - self.margin, self.stroke)
-        self.canvas.put_pixel(self.width - self.margin, self.height - self.margin, self.stroke)
+        draw_point(self.canvas, self.margin, self.margin, self.stroke)
+        draw_point(self.canvas, self.width - self.margin, self.margin, self.stroke)
+        draw_point(self.canvas, self.margin, self.height - self.margin, self.stroke)
+        draw_point(self.canvas, self.width - self.margin, self.height - self.margin, self.stroke)

@@ -72,3 +72,13 @@ def draw_circle(fb: Framebuffer, center_x: int, center_y: int, r: int, color: Co
         y = int(center_y - (r * math.sin(angle)))
         angle += step
         draw_line(fb, px, py, x, y, color)
+
+
+def fill_rect(fb: Framebuffer, x: int, y: int, w: int, h: int, color: Color) -> None:
+    for y0 in range(y, y + h):
+        for x0 in range(x, x + w):
+            draw_point(fb, x0, y0, color)
+
+
+def background(fb: Framebuffer, color: Color) -> None:
+    fill_rect(fb, 0, 0, fb.w, fb.h, color)

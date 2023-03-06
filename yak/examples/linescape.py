@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 
 from yak.color import Palette
-from yak.draw import draw_line, draw_rect
+from yak.draw import background, draw_line, draw_rect
 from yak.sketch import Sketch
 
 
@@ -10,9 +10,7 @@ class Linescape(Sketch):
     margin: int = 20
 
     def setup(self):
-        for y in range(self.height):
-            for x in range(self.width):
-                self.canvas.put_pixel(x, y, Palette.WHITE)
+        background(self.canvas, Palette.WHITE)
 
         draw_rect(self.canvas,
                   self.margin,
