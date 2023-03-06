@@ -112,7 +112,7 @@ class Window:
             self._handle_event(event)
 
     def _render(self) -> None:
-        sdl2.SDL_UpdateTexture(self.texture, None, self.fb.memory(), self.fb.w * self.fb.depth)
+        sdl2.SDL_UpdateTexture(self.texture, None, self.fb.memory, self.fb.w * self.fb.depth)
         sdl2.SDL_RenderClear(self.renderer)
         sdl2.SDL_RenderCopy(self.renderer, self.texture, None, None)
         sdl2.SDL_RenderPresent(self.renderer)

@@ -19,6 +19,7 @@ class Framebuffer:
     def depth(self) -> int:
         return self.fmt.depth()
 
+    @property
     def memory(self):
         return (ctypes.c_char * len(self.mem)).from_buffer(self.mem)
 
