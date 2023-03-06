@@ -1,13 +1,13 @@
 import sys
 
-from yakdraw.examples.bugfinder import BugFinder
-from yakdraw.examples.canvas_bounds import CanvasBounds
-from yakdraw.examples.color_pixels import ColorPixels
-from yakdraw.examples.linescape import Linescape
-from yakdraw.examples.mouse_circles import MouseCircles
-from yakdraw.examples.random_circles import RandomCircles
-from yakdraw.examples.random_lines import RandomLines
-from yakdraw.examples.simple_linepen import Linepen
+from yak.examples.canvas_bounds import CanvasBounds
+from yak.examples.color_pixels import ColorPixels
+from yak.examples.linescape import Linescape
+from yak.examples.mouse_circles import MouseCircles
+from yak.examples.random_circles import RandomCircles
+from yak.examples.random_lines import RandomLines
+from yak.examples.simple_linepen import Linepen
+
 
 
 options = {

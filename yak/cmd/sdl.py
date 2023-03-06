@@ -4,9 +4,9 @@ import sys
 
 from dataclasses import dataclass
 
-from yakdraw.color import Palette
-from yakdraw.sketch import Sketch
-from yakdraw.window import Mouse
+from yak.color import Palette
+from yak.sketch import Sketch
+from yak.window import Mouse
 
 
 WIDTH = 320

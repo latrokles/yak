@@ -1,9 +1,9 @@
 from dataclasses import dataclass
 from random import randint
 
-from yakdraw.color import Palette
-from yakdraw.sketch import Sketch
-from yakdraw.window import Mouse
+from yak.color import Palette
+from yak.sketch import Sketch
+from yak.window import Mouse
 
 
 @dataclass

@@ -1,15 +1,16 @@
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 
-from yakdraw.color import Color, Palette
-from yakdraw.sketch import Sketch
+from yak.color import Color, Palette
+from yak.sketch import Sketch
 
 
 @dataclass
 class CanvasBounds(Sketch):
-    stroke: Color = Palette.RED
+    stroke: Color = field(init=False)
     margin: int = 20
 
     def setup(self):
+        self.stroke = Palette.RED1
         for y in range(self.height):
             for x in range(self.width):
                 self.canvas.put_pixel(x, y, Palette.WHITE)

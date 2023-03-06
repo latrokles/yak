@@ -1,9 +1,9 @@
 from dataclasses import dataclass, field
 
-from yakdraw.color import Palette
-from yakdraw.draw import draw_line
-from yakdraw.sketch import Sketch
-from yakdraw.window import Mouse
+from yak.color import Palette
+from yak.draw import draw_line
+from yak.sketch import Sketch
+from yak.window import Mouse
 
 
 @dataclass

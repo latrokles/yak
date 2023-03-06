@@ -1,8 +1,8 @@
 from dataclasses import dataclass, field
 
-from yakdraw.color import ColorFmt
-from yakdraw.fb import Framebuffer
-from yakdraw.window import Mouse, Window
+from yak.color import ColorFmt
+from yak.fb import Framebuffer
+from yak.window import Mouse, Window
 
 
 @dataclass

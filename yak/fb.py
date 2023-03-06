@@ -2,7 +2,7 @@ import ctypes
 
 from dataclasses import dataclass, field
 
-from yakdraw.color import Color, ColorFmt
+from yak.color import Color, ColorFmt
 
 
 @dataclass

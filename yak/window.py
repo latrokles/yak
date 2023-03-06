@@ -3,8 +3,8 @@ import sdl2
 
 from typing import Callable
 
-from yakdraw.color import ColorFmt
-from yakdraw.fb import Framebuffer
+from yak.color import ColorFmt
+from yak.fb import Framebuffer
 
 
 YAK_2_SDL_FORMAT = {

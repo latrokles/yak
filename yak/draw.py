@@ -1,7 +1,7 @@
 import math
 
-from yakdraw.color import Color
-from yakdraw.fb import Framebuffer
+from yak.color import Color
+from yak.fb import Framebuffer
 
 
 def draw_point(fb: Framebuffer, x: int, y: int, color: Color):
