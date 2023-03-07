@@ -7,6 +7,7 @@ from yak.examples.mouse_circles import MouseCircles
 from yak.examples.random_circles import RandomCircles
 from yak.examples.random_lines import RandomLines
 from yak.examples.simple_linepen import Linepen
+from yak.examples.triangles import Triangles
 
 
 
@@ -25,6 +26,8 @@ options = {
                   lambda: Linescape(300, 300, 2, title='linescape')),
     'linepen': ('simple line "pen"',
                 lambda: Linepen(300, 300, 2, title='simple linepen')),
+    'triangles': ('simple triangles',
+                  lambda: Triangles(300, 300, 1, title='triangles')),
     'quit': ('quit examples', quit) 
 }
 

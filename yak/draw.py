@@ -2,6 +2,7 @@ import math
 
 from yak.color import Color
 from yak.fb import Framebuffer
+from yak.geometry import Point
 
 
 def draw_point(fb: Framebuffer, x: int, y: int, color: Color):
@@ -73,6 +74,23 @@ def draw_circle(fb: Framebuffer, center_x: int, center_y: int, r: int, color: Co
         angle += step
         draw_line(fb, px, py, x, y, color)
 
+
+def draw_polygon(fb: Framebuffer, points: list[Point], color: Color) -> None:
+    if len(points) < 3:
+        # should this raise an error?
+        return
+
+    prev = points[0]
+    for curr in points[1:]:
+        draw_line(fb, prev.x, prev.y, curr.x, curr.y, color)
+        prev = curr
+    # close the polygon
+    draw_line(fb, points[0].x, points[0].y, points[-1].x, points[-1].y, color)
+
+
+def draw_triangle(fb: Framebuffer, x0: int, y0: int, x1: int, y1: int, x2: int, y2: int, color: Color) -> None:
+    draw_polygon(fb, [Point(x0, y0), Point(x1, y1), Point(x2, y2)], color)
+    
 
 def fill_rect(fb: Framebuffer, x: int, y: int, w: int, h: int, color: Color) -> None:
     for y0 in range(y, y + h):
