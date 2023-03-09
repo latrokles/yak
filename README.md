@@ -27,5 +27,6 @@ The code in here may be:
 these are notes for myself.
 
 - clone this repo.
-- install with `pip install -e` (use virtual envs)
+- install with `pip install -e .[test]` (use virtual envs)
 - run examples with `yak-examples`
+- run tests with `pytest`
