@@ -119,3 +119,84 @@ class Point:
 class Rectangle:
     origin: Point  # top left corner
     corner: Point  # bottom right corner
+
+    @staticmethod
+    def from_sides(left: int|float, right: int|float, top: int|float, bottom: int|float) -> Rectangle:
+        return Rectangle(Point(left, top), Point(right, bottom))
+
+    @staticmethod
+    def from_point_with_extent(origin: Point, extent: Point) -> Rectangle:
+        return Rectangle(origin, origin + extent)
+
+    @staticmethod
+    def from_coordinates_and_dimensions(x: int|float, y: int|float, width: int|float, height: int|float) -> Rectangle:
+        # handle negative width and/or height
+        # - recompute origin ?
+        # - raise error to avoid degenerate triangle?
+        origin = Point(x, y)
+        return Rectangle(origin, origin + Point(width, height)) 
+
+    # properties
+    @property
+    def width(self) -> int|float:
+        return corner.x - origin.x
+
+    @property
+    def height(self) -> int|float:
+        return corner.y - origin.y
+
+    @property
+    def extent(self) -> Point:
+        return self.corner - self.origin
+
+    @property
+    def top(self) -> int|float:
+        return self.origin.y
+
+    @property
+    def right(self) -> int|float:
+        return self.corner.x
+
+    @property
+    def bottom(self) -> int|float:
+        return self.corner.y
+
+    @property
+    def left(self) -> int|float:
+        return self.origin.x
+    
+    @property
+    def center(self) -> Point:
+        return Point(self.origin - self.corner) // 2
+
+    @property
+    def top_left(self) -> Point:
+        return self.origin
+
+    @property
+    def top_center(self) -> Point:
+        return Point(self.center.x, self.top)
+
+    @property
+    def top_right(self) -> Point:
+        return Point(self.right, self.top)
+
+    @property
+    def right_center(self) -> Point:
+        return Point(self.right, self.center.y)
+
+    @property
+    def bottom_right(self) -> Point:
+        return self.corner
+
+    @property
+    def bottom_center(self) -> Point:
+        return Point(self.center.x, self.bottom)
+
+    @property
+    def bottom_left(self) -> Point:
+        return Point(self.left, self.bottom)
+
+    @property
+    def left_center(self) -> Point:
+        return Point(self.left, self.center.y)
