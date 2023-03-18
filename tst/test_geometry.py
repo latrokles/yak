@@ -52,10 +52,17 @@ def test_rectangle_properties():
     r = Rectangle(Point(10, 10), Point(60, 60))
     assert r.width == 50
     assert r.height == 50
+    assert r.extent == Point(50, 50)
     assert r.top == 10
     assert r.right == 60
     assert r.bottom == 60
     assert r.left == 10
     assert r.top_left == Point(10, 10)
     assert r.top_center == Point(35, 10)
+    assert r.top_right == Point(60, 10)
+    assert r.right_center == Point(60, 35)
+    assert r.bottom_right == Point(60, 60)
+    assert r.bottom_center == Point(35, 60)
+    assert r.bottom_left == Point(10, 60)
+    assert r.left_center == Point(10, 35)
      
