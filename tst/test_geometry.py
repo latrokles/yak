@@ -1,4 +1,4 @@
-from yak.geometry import Point
+from yak.geometry import Point, Rectangle
 
 # gonna be a bit lazy here by testing in logical groupings
 # I'm glad the blue book has a few examples to use as test cases.
@@ -37,3 +37,25 @@ def test_point_functions():
     assert Point(160, 240).grid(Point(50, 50)) == Point(150, 250)
     assert Point(160, 240).truncated_grid(Point(50, 50)) == Point(150, 200)
     assert Point(175, 300).transpose() == Point(300, 175)
+
+
+def test_point_conversions():
+    assert Point(10, 10).corner(Point(50, 50)) == Rectangle(Point(10, 10), Point(50, 50))
+    assert Point(10, 10).extent(Point(50, 50)) == Rectangle(Point(10, 10), Point(60, 60))
+
+def test_rectangle_factories():
+    assert Rectangle.from_sides(10, 50, 10, 50) == Rectangle(Point(10,10), Point(50, 50))
+    assert Rectangle.from_coordinates_and_dimensions(50, 50, 50, 50) == Rectangle(Point(50, 50), Point(100, 100))
+
+
+def test_rectangle_properties():
+    r = Rectangle(Point(10, 10), Point(60, 60))
+    assert r.width == 50
+    assert r.height == 50
+    assert r.top == 10
+    assert r.right == 60
+    assert r.bottom == 60
+    assert r.left == 10
+    assert r.top_left == Point(10, 10)
+    assert r.top_center == Point(35, 10)
+     

@@ -108,10 +108,10 @@ class Point:
 
     # conversions
     def corner(self, p: Point) -> Rectangle:
-        pass
+        return Rectangle(self, p)
 
     def extent(self, p: Point) -> Rectangle:
-        pass
+        return Rectangle.from_point_with_extent(self, p)
 
 
 # implements the Rectangle protocol from the blue book (pg. 344).
@@ -139,11 +139,11 @@ class Rectangle:
     # properties
     @property
     def width(self) -> int|float:
-        return corner.x - origin.x
+        return self.corner.x - self.origin.x
 
     @property
     def height(self) -> int|float:
-        return corner.y - origin.y
+        return self.corner.y - self.origin.y
 
     @property
     def extent(self) -> Point:
@@ -167,7 +167,7 @@ class Rectangle:
     
     @property
     def center(self) -> Point:
-        return Point(self.origin - self.corner) // 2
+        return (self.origin + self.corner) // 2
 
     @property
     def top_left(self) -> Point:
