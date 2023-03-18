@@ -1,14 +1,17 @@
+import os
 import sys
 
-from yak.examples.canvas_bounds import CanvasBounds
-from yak.examples.color_pixels import ColorPixels
-from yak.examples.linescape import Linescape
-from yak.examples.mouse_circles import MouseCircles
-from yak.examples.random_circles import RandomCircles
-from yak.examples.random_lines import RandomLines
-from yak.examples.simple_linepen import Linepen
-from yak.examples.triangles import Triangles
+EXAMPLES_DIR = os.path.dirname(os.path.abspath(__file__))
+sys.path.append(os.path.dirname(EXAMPLES_DIR))
 
+from draw.canvas_bounds import CanvasBounds
+from draw.color_pixels import ColorPixels
+from draw.linescape import Linescape
+from draw.mouse_circles import MouseCircles
+from draw.random_circles import RandomCircles
+from draw.random_lines import RandomLines
+from draw.simple_linepen import Linepen
+from draw.triangles import Triangles
 
 
 options = {
@@ -56,5 +59,7 @@ def main():
             print(f'`{selection}` is not a valid example!\n')
             continue
         program()
-        
-    
+
+
+if __name__ == '__main__':
+    main()
