@@ -12,23 +12,31 @@ from yak.util import LOG
 
 @dataclass
 class YakVirtualMachine:
+    running: bool = False
     tasks: list[Task] = field(default_factory=list)
     vocabularies: dict[str, Vocabulary] = field(default_factory=dict)
 
-    def run(self) -> int:
-        try:
-            self.boot_up()
-            self.execute_loop()
-            return self.shut_down()
-        except Exception as e:
-            LOG.critical(f'wtf?: {e}')
-            return -1
+    def start(self) -> int:
+        self.init()
+        self.run()
+        return self.shut_down()
 
-    def boot_up(self) -> None:
+    def init(self) -> None:
         LOG.info('booting up...')
         self.init_builtins()
+        self.bootstrap()
+        self.run()
 
-    def execute_loop(self) -> None:
+    def init_builtins(self):
+        LOG.info('initializing builtins...')
+        self.vocabularies[SYNTAX.name] = SYNTAX
+
+    def bootstrap(self) -> None:
+        self.running = True
+
+        pass
+
+    def run(self) -> None:
         iter_count = int(os.getenv('ITERCOUNT', '5'))
         for i in range(iter_count):
             LOG.info(f'executing: {i}!')
@@ -37,9 +45,6 @@ class YakVirtualMachine:
         LOG.info('shutting down...')
         return 0
 
-    def init_builtins(self):
-        LOG.info('initializing builtins...')
-        self.vocabularies[SYNTAX.name] = SYNTAX
 
     def fetch_word(self, ref: WordRef|str, vocabulary_name: str|None = None) -> Word|None:
         # TODO implement vocabulary lookup

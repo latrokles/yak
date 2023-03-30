@@ -17,6 +17,14 @@ class Task(YakPrimitive):
         self.errorstack = (self.errorstack or Stack('error'))
         self.retainstack = (self.retainstack or Stack('retain'))
 
+    def start(self, word: Word) -> int:
+        self.bootstrap()
+        self.run()
+
+    def boostrap(self):
+
+
+
     def fetch_word(self, name: str) -> Word:
         # TODO account for vocabulary loading order
         if (word := self.vm.fetch_word(name)) is None:
