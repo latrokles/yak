@@ -33,7 +33,6 @@ class YakVirtualMachine:
 
     def bootstrap(self) -> None:
         self.running = True
-
         pass
 
     def run(self) -> None:
