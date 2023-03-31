@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 
-from yak.lang.primitives import Stack, Word, YakPrimitive, YakUndefinedError
+from yak.lang.primitives import Stack, Value, Word, WordRef, YakPrimitive, YakUndefinedError
 
 
 @dataclass
@@ -21,7 +21,19 @@ class Task(YakPrimitive):
         self.bootstrap()
         self.run()
 
-    def boostrap(self):
+    def call(self, quote: list[Value]) -> None:
+        pass
+
+    def run(self) -> None:
+        pass
+
+    def handle_error(self) -> None:
+        pass
+
+    def eval(self, word: WordRef) -> None:
+        pass
+
+
 
 
 

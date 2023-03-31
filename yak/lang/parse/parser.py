@@ -5,6 +5,7 @@ from typing import Callable, ClassVar
 from yak.lang.parse import Parser, Scanner, Token
 from yak.lang.primitives import Value, Word, WordRef, YakError
 from yak.lang.primitives.numbers import is_int, is_float
+from yak.lang.primitives.quotation import Quotation
 
 
 class YakParseError(YakError):
@@ -26,17 +27,17 @@ class YakParser(Parser):
 
     def __post_init__(self):
         self.parsers = (self.parse_string, self.parse_number, self.parse_word)
-        self.push_state([])
+        self.push_state(Quotation())
 
     @property
     def current_state(self) -> list[Value]:
         accum = self.task.datastack.peek()
-        if not isinstance(accum, list):
-            msg = f'Invalid Parser State. expected=list, found={type(accum)}'
+        if not isinstance(accum, Quotation):
+            msg = f'Invalid Parser State. expected=Quotation, found={type(accum)}'
             raise YakParseError(msg)
         return accum
 
-    def push_state(self, quote: list[Value]) -> None:
+    def push_state(self, quote: Quotation) -> None:
         self.task.datastack.push(quote)
 
     def parse(self) -> Value:
