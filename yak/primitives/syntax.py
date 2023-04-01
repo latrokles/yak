@@ -1,6 +1,6 @@
-from yak.lang.primitives.task import Task
-from yak.lang.primitives.vocabulary import define_vocabulary
-from yak.lang.primitives.word import define_primitive
+from yak.primitives.task import Task
+from yak.primitives.vocabulary import define_vocabulary
+from yak.primitives.word import define_primitive
 
 
 def true(task: Task):
@@ -22,4 +22,3 @@ SYNTAX = define_vocabulary('syntax')
 SYNTAX.store(define_primitive(SYNTAX.name, 't', true))
 SYNTAX.store(define_primitive(SYNTAX.name, 'f', false))
 SYNTAX.store(define_primitive(SYNTAX.name, 'nil', nil))
-

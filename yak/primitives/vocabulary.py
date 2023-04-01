@@ -1,4 +1,4 @@
-from yak.lang.primitives import Vocabulary
+from yak.primitives import Vocabulary
 
 
 def define_vocabulary(name: str) -> Vocabulary:

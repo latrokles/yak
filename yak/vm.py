@@ -4,14 +4,14 @@ import os
 
 from dataclasses import dataclass, field
 
-from yak.lang.primitives import Vocabulary, Word, WordRef
-from yak.lang.primitives.task import Task
-from yak.lang.primitives.bootstrap import BOOTSTRAP
-from yak.lang.primitives.combinators import COMBINATORS
-from yak.lang.primitives.kernel import KERNEL
-from yak.lang.primitives.io import IO
-from yak.lang.primitives.parsing import PARSING
-from yak.lang.primitives.syntax import SYNTAX
+from yak.primitives import Vocabulary, Word, WordRef
+from yak.primitives.task import Task
+from yak.primitives.bootstrap import BOOTSTRAP
+from yak.primitives.combinators import COMBINATORS
+from yak.primitives.kernel import KERNEL
+from yak.primitives.io import IO
+from yak.primitives.parsing import PARSING
+from yak.primitives.syntax import SYNTAX
 from yak.util import LOG
 
 

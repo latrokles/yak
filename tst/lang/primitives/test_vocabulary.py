@@ -1,6 +1,6 @@
 import pytest
 
-from yak.lang.primitives import Vocabulary, Word
+from yak.primitives import Vocabulary, Word
 
 
 @pytest.fixture

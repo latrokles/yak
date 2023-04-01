@@ -1,6 +1,6 @@
 from collections import UserList
 
-from yak.lang.primitives import Value, YakPrimitive, print_object
+from yak.primitives import Value, YakPrimitive, print_object
 
 
 class Quotation(UserList, YakPrimitive):

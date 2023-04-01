@@ -1,7 +1,7 @@
 import pytest
 
-from yak.lang.parse import Scanner, Token
-from yak.lang.parse.scanner import YakScanError, YakScanner
+from yak.parse import Scanner, Token
+from yak.parse.scanner import YakScanError, YakScanner
 
 
 def new_scanner(source: str) -> Scanner:

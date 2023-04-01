@@ -1,8 +1,8 @@
-from yak.lang.parse.parser import YakParser
-from yak.lang.parse.scanner import YakScanner
-from yak.lang.primitives.task import Task
-from yak.lang.primitives.vocabulary import define_vocabulary
-from yak.lang.primitives.word import define_primitive
+from yak.parse.parser import YakParser
+from yak.parse.scanner import YakScanner
+from yak.primitives.task import Task
+from yak.primitives.vocabulary import define_vocabulary
+from yak.primitives.word import define_primitive
 
 
 __VOCAB__ = 'parsing'

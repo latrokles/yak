@@ -2,7 +2,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import Protocol
 
-from yak.lang.primitives import Symbol, Value, Word, YakPrimitive
+from yak.primitives import Symbol, Value, Word, YakPrimitive
 
 
 @dataclass
@@ -48,4 +48,3 @@ class Parser:
 
     def pop_exclusive_definition(self, sym: Symbol) -> None:
         pass
-

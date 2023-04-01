@@ -2,10 +2,10 @@ from dataclasses import dataclass, field
 from enum import Enum
 from typing import Callable, ClassVar
 
-from yak.lang.parse import Parser, Scanner, Token
-from yak.lang.primitives import Value, Word, WordRef, YakError
-from yak.lang.primitives.numbers import is_int, is_float
-from yak.lang.primitives.quotation import Quotation
+from yak.parse import Parser, Scanner, Token
+from yak.primitives import Value, Word, WordRef, YakError
+from yak.primitives.numbers import is_int, is_float
+from yak.primitives.quotation import Quotation
 
 
 class YakParseError(YakError):

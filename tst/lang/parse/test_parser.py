@@ -1,11 +1,11 @@
 import pytest
 
-from yak.lang.parse.parser import YakParser, YakParseError
-from yak.lang.parse.scanner import YakScanner
-from yak.lang.primitives import WordRef
-from yak.lang.primitives.quotation import Quotation
-from yak.lang.primitives.task import Task
-from yak.lang.vm import YakVirtualMachine
+from yak.parse.parser import YakParser, YakParseError
+from yak.parse.scanner import YakScanner
+from yak.primitives import WordRef
+from yak.primitives.quotation import Quotation
+from yak.primitives.task import Task
+from yak.vm import YakVirtualMachine
 
 
 @pytest.fixture

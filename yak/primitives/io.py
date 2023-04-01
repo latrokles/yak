@@ -1,6 +1,6 @@
-from yak.lang.primitives.task import Task
-from yak.lang.primitives.vocabulary import define_vocabulary
-from yak.lang.primitives.word import define_primitive
+from yak.primitives.task import Task
+from yak.primitives.vocabulary import define_vocabulary
+from yak.primitives.word import define_primitive
 
 
 __VOCAB__ = 'io'

@@ -1,15 +1,15 @@
 import pkg_resources
 
-from yak.lang.primitives.io import IO
-from yak.lang.primitives.parsing import PARSING
-from yak.lang.primitives.combinators import COMBINATORS
-from yak.lang.primitives.task import Task
-from yak.lang.primitives.vocabulary import define_vocabulary
-from yak.lang.primitives.word import define_compound, define_primitive
+from yak.primitives.io import IO
+from yak.primitives.parsing import PARSING
+from yak.primitives.combinators import COMBINATORS
+from yak.primitives.task import Task
+from yak.primitives.vocabulary import define_vocabulary
+from yak.primitives.word import define_compound, define_primitive
 
 
 __VOCAB__ = 'bootstrap'
-__SCRIPT__ = 'lang/library/bootstrap.yak'
+__SCRIPT__ = 'library/bootstrap.yak'
 
 
 def bootstrap_script(task: Task):

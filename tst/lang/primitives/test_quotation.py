@@ -1,7 +1,7 @@
 import pytest
 
-from yak.lang.primitives import Value
-from yak.lang.primitives.quotation import Quotation
+from yak.primitives import Value
+from yak.primitives.quotation import Quotation
 
 
 @pytest.fixture

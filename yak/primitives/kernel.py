@@ -1,7 +1,7 @@
-from yak.lang.primitives import Value, YakPrimitive
-from yak.lang.primitives import Task, print_object
-from yak.lang.primitives.vocabulary import define_vocabulary
-from yak.lang.primitives.word import define_primitive
+from yak.primitives import Value, YakPrimitive
+from yak.primitives import Task, print_object
+from yak.primitives.vocabulary import define_vocabulary
+from yak.primitives.word import define_primitive
 
 __VOCAB__ = 'kernel'
 

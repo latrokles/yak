@@ -1,9 +1,9 @@
 from dataclasses import InitVar, dataclass, field
 from io import StringIO
 
-from yak.lang.parse import Scanner, Token
-from yak.lang.primitives import YakError
-from yak.lang.primitives.strings import blank
+from yak.parse import Scanner, Token
+from yak.primitives import YakError
+from yak.primitives.strings import blank
 
 
 class YakScanError(YakError):

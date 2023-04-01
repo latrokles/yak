@@ -1,4 +1,4 @@
-from yak.lang.vm import YakVirtualMachine
+from yak.vm import YakVirtualMachine
 
 def yak():
     return YakVirtualMachine().run()
