@@ -20,8 +20,14 @@ class Interpreter:
         self.errorstack = (self.errorstack or Stack('error'))
         self.retainstack = (self.retainstack or Stack('retain'))
 
-    def start(self, word: Word) -> int:
-        self.run()
+    def init(self, word: Word) -> None:
+        self.datastack.push(self.get_init_defn(word))
+        self.call()
+
+    def get_init_defn(self, word: Word) -> Quotation:
+        if word.primitive:
+            return Quotation([word.ref])
+        return word.defn
 
     def call(self) -> None:
         """

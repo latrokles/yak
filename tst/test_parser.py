@@ -37,7 +37,7 @@ def test_parsing_ints_appends_python_ints_to_parse_tree(parser):
 @pytest.mark.parametrize('src', ['t f nil'])
 def test_parsing_words_appends_a_word_reference_to_parse_tree(parser):
     parse_tree = parser.parse()
-    assert parse_tree == Quotation([WordRef('t'), WordRef('f'), WordRef('nil')])
+    assert parse_tree == Quotation([WordRef('t', 'syntax'), WordRef('f', 'syntax'), WordRef('nil', 'syntax')])
 
 
 @pytest.mark.parametrize('src', ['frobulate'])

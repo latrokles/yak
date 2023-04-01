@@ -53,6 +53,7 @@ class Symbol(YakPrimitive):
 class WordRef(YakPrimitive):
     # TODO add support for word hash
     name: str
+    vocab: str
     parsing: bool = False
 
     def __str__(self) -> str:
@@ -72,7 +73,7 @@ class Word(YakPrimitive):
 
     @property
     def ref(self) -> WordRef:
-        return WordRef(self.name, self.parsing)
+        return WordRef(self.name, self.vocabulary, self.parsing)
 
     def eval(self, vm):
         raise NotImplementedError(f'{self.name} is not implemented.')
