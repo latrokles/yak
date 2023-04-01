@@ -1,6 +1,6 @@
 from yak.interpreter import Interpreter
-from yak.primitives.vocabulary import define_vocabulary
-from yak.primitives.word import define_primitive
+from yak.primitives.vocabulary import def_vocabulary
+from yak.primitives.word import def_primitive
 
 
 def true(interpreter: Interpreter):
@@ -18,7 +18,7 @@ def nil(interpreter: Interpreter):
     interpreter.datastack.push(None)
 
 
-SYNTAX = define_vocabulary('syntax')
-SYNTAX.store(define_primitive(SYNTAX.name, 't', true))
-SYNTAX.store(define_primitive(SYNTAX.name, 'f', false))
-SYNTAX.store(define_primitive(SYNTAX.name, 'nil', nil))
+SYNTAX = def_vocabulary('syntax')
+SYNTAX.store(def_primitive(SYNTAX.name, 't', true))
+SYNTAX.store(def_primitive(SYNTAX.name, 'f', false))
+SYNTAX.store(def_primitive(SYNTAX.name, 'nil', nil))

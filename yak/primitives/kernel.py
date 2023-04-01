@@ -1,8 +1,8 @@
 from yak.interpreter import Interpreter
 from yak.primitives import Value, YakPrimitive
 from yak.primitives import print_object
-from yak.primitives.vocabulary import define_vocabulary
-from yak.primitives.word import define_primitive
+from yak.primitives.vocabulary import def_vocabulary
+from yak.primitives.word import def_primitive
 
 __VOCAB__ = 'kernel'
 
@@ -19,6 +19,6 @@ def show_stack(interpreter: Interpreter) -> None:
     print_line(interpreter)
 
 
-KERNEL = define_vocabulary(__VOCAB__)
-KERNEL.store(define_primitive(__VOCAB__, 'print-line', print_line))
-KERNEL.store(define_primitive(__VOCAB__, 'show-stack', show_stack))
+KERNEL = def_vocabulary(__VOCAB__)
+KERNEL.store(def_primitive(__VOCAB__, 'print-line', print_line))
+KERNEL.store(def_primitive(__VOCAB__, 'show-stack', show_stack))

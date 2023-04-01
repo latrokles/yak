@@ -1,6 +1,6 @@
 from yak.interpreter import Interpreter
-from yak.primitives.vocabulary import define_vocabulary
-from yak.primitives.word import define_primitive
+from yak.primitives.vocabulary import def_vocabulary
+from yak.primitives.word import def_primitive
 
 
 __VOCAB__ = 'io'
@@ -21,6 +21,6 @@ def set_file_contents(interpreter: Interpreter):
         f.write(contents)
 
 
-IO = define_vocabulary(__VOCAB__)
-IO.store(define_primitive(__VOCAB__, 'file-contents', get_file_contents))
-IO.store(define_primitive(__VOCAB__, 'file-contents=', set_file_contents))
+IO = def_vocabulary(__VOCAB__)
+IO.store(def_primitive(__VOCAB__, 'file-contents', get_file_contents))
+IO.store(def_primitive(__VOCAB__, 'file-contents=', set_file_contents))

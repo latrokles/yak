@@ -1,6 +1,6 @@
 from yak.interpreter import Interpreter
-from yak.primitives.vocabulary import define_vocabulary
-from yak.primitives.word import define_primitive
+from yak.primitives.vocabulary import def_vocabulary
+from yak.primitives.word import def_primitive
 
 __VOCAB__ = 'combinators'
 
@@ -10,5 +10,5 @@ def call(interpreter: Interpreter) -> None:
     interpreter.call()
 
 
-COMBINATORS = define_vocabulary(__VOCAB__)
-COMBINATORS.store(define_primitive(__VOCAB__, 'call', call))
+COMBINATORS = def_vocabulary(__VOCAB__)
+COMBINATORS.store(def_primitive(__VOCAB__, 'call', call))

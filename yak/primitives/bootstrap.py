@@ -4,8 +4,8 @@ from yak.interpreter import Interpreter
 from yak.primitives.io import IO
 from yak.primitives.parsing import PARSING
 from yak.primitives.combinators import COMBINATORS
-from yak.primitives.vocabulary import define_vocabulary
-from yak.primitives.word import define_compound, define_primitive
+from yak.primitives.vocabulary import def_vocabulary
+from yak.primitives.word import def_compound, def_primitive
 
 
 __VOCAB__ = 'bootstrap'
@@ -24,13 +24,13 @@ def resource_path(interpreter: Interpreter):
     interpreter.datastack.push(fullpath)
 
 
-BOOTSTRAP = define_vocabulary(__VOCAB__)
-BOOTSTRAP.store(define_primitive(__VOCAB__, 'bootstrap-script', bootstrap_script))
-BOOTSTRAP.store(define_primitive(__VOCAB__, 'resource-path', resource_path))
-BOOTSTRAP.store(define_compound(__VOCAB__,
-                                'bootstrap',
-                                [BOOTSTRAP.fetch('bootstrap-script').ref,
-                                 BOOTSTRAP.fetch('resource-path').ref,
-                                 IO.fetch('file-contents').ref,
-                                 PARSING.fetch('parse').ref,
-                                 COMBINATORS.fetch('call').ref]))
+BOOTSTRAP = def_vocabulary(__VOCAB__)
+BOOTSTRAP.store(def_primitive(__VOCAB__, 'bootstrap-script', bootstrap_script))
+BOOTSTRAP.store(def_primitive(__VOCAB__, 'resource-path', resource_path))
+BOOTSTRAP.store(def_compound(__VOCAB__,
+                             'bootstrap',
+                             [BOOTSTRAP.fetch('bootstrap-script').ref,
+                              BOOTSTRAP.fetch('resource-path').ref,
+                              IO.fetch('file-contents').ref,
+                              PARSING.fetch('parse').ref,
+                              COMBINATORS.fetch('call').ref]))

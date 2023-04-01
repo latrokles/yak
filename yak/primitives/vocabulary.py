@@ -24,5 +24,5 @@ class Vocabulary:
         return self.defs.values()
 
 
-def define_vocabulary(name: str) -> Vocabulary:
+def def_vocabulary(name: str) -> Vocabulary:
     return Vocabulary(name)
