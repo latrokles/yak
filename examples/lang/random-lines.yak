@@ -1,0 +1,9 @@
+IN: random-lines
+USING: draw draw.palette geometry ui ;
+
+: random-x ( -- int ) 20 +window+ width>>  20 - random-int ;
+: random-y ( -- int ) 20 +window+ height>> 20 - random-int ;
+: random-point ( -- point ) random-x random-y make-point ;
+: random-line ( -- ) +window+ random-point random-point random-color draw-line ;
+: set-background ( -- ) +window+ white >>background ;
+: main ( -- ) set-background [ random-line ] loop ;
