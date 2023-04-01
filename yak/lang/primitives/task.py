@@ -54,15 +54,12 @@ class Task(YakPrimitive):
         """
         while self.active:
             try:
-                if self.callframe is None:
+                if self.callframe is None or self.callframe.empty:
                     if self.callstack.empty():
                         break
 
                     self.callframe = self.callstack.pop()
                     continue
-
-                if self.callframe.empty:
-                    break
 
                 # get first element to eval and advance position on callframe
                 to_evaluate = self.callframe.head
@@ -75,18 +72,52 @@ class Task(YakPrimitive):
         self.callframe = None
 
     def eval(self, value: Value) -> None:
-        pass
+        if not isinstance(value, WordRef):
+            self.datastack.push(value)
+            return
+
+        self.execute(self, value)
+
+    def execute(self, word_ref: WordRef) -> None:
+        try:
+            word = self.fetch_word(word_ref.name, word_ref.vocab)
+            word.eval(self)
+        except Exception as e:
+            self.callstack.push(self.callframe)
+            raise
 
     def handle_error(self, err: Exception) -> bool:
-        pass
+        if not self.active:
+            traceback.print_exc()
+            self.reset()
+            return True
 
+        self.datastack.push(err)
+        try:
+            throw = self.fetch_word('throw', 'errors')
+            self.eval(throw)
+            return False
+        except Exception as e:
+            print(f'There was an error executing `throw`, error={e}')
+            traceback.print_exc()
+            self.reset()
+            return True
 
+    def fetch_word(self, name: str, vocab: str|None = None) -> Word:
+        if vocab is not None:
+            if (word := self.vm.fetch_word(name, vocab)) is None:
+                raise YakUndefinedError(f'word={name} is not defined in vocabulary={vocab}.')
+            return word
 
-
-
-    def fetch_word(self, name: str) -> Word:
-        # TODO account for vocabulary loading order
+        # TODO account for vocabulary loading order resolution.
         if (word := self.vm.fetch_word(name)) is None:
             raise YakUndefinedError(f'word={name} is not defined.')
         print(f'Found word -> {word}')
         return word
+
+    def reset(self) -> None:
+        self.callstack.clear()
+        self.datastack.clear()
+        self.errorstack.clear()
+        self.retainstack.clear()
+        self.callframe = None
