@@ -1,7 +1,9 @@
 from dataclasses import dataclass
 
-from yak.primitives import Stack, Value, Word, WordRef, YakError, YakUndefinedError
+from yak.primitives import Value, YakError, YakUndefinedError
 from yak.primitives.quotation import Quotation
+from yak.primitives.stack import Stack
+from yak.primitives.word import Word, WordRef
 
 
 @dataclass

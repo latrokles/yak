@@ -4,10 +4,11 @@ from enum import Enum
 from io import StringIO
 from typing import Callable, ClassVar
 
-from yak.primitives import Value, Word, WordRef, YakError, YakPrimitive
+from yak.primitives import Value, YakError, YakPrimitive
 from yak.primitives.numbers import is_int, is_float
 from yak.primitives.quotation import Quotation
 from yak.primitives.strings import blank
+from yak.primitives.word import Word, WordRef
 
 
 class ScanError(YakError):

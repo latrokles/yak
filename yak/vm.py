@@ -6,13 +6,14 @@ from dataclasses import dataclass, field
 
 from yak.codebase import Codebase
 from yak.interpreter import Interpreter
-from yak.primitives import Vocabulary, Word, WordRef
 from yak.primitives.bootstrap import BOOTSTRAP
 from yak.primitives.combinators import COMBINATORS
 from yak.primitives.kernel import KERNEL
 from yak.primitives.io import IO
 from yak.primitives.parsing import PARSING
 from yak.primitives.syntax import SYNTAX
+from yak.primitives.vocabulary import Vocabulary
+from yak.primitives.word import Word, WordRef
 from yak.util import LOG
 
 

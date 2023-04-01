@@ -2,7 +2,7 @@ import pytest
 
 from yak.interpreter import Interpreter
 from yak.parsing import Parser, ParseError, Scanner
-from yak.primitives import WordRef
+from yak.primitives.word import WordRef
 from yak.primitives.quotation import Quotation
 from yak.vm import YakVirtualMachine
 
