@@ -1,7 +1,6 @@
 import pytest
 
-from yak.parse.parser import YakParser, YakParseError
-from yak.parse.scanner import YakScanner
+from yak.parsing import Parser, ParseError, Scanner
 from yak.primitives import WordRef
 from yak.primitives.quotation import Quotation
 from yak.primitives.task import Task
@@ -9,11 +8,11 @@ from yak.vm import YakVirtualMachine
 
 
 @pytest.fixture
-def parser(src) -> YakParser:
+def parser(src) -> Parser:
     vm = YakVirtualMachine()
     vm.init()
 
-    return YakParser(Task(vm), YakScanner(src))
+    return Parser(Task(vm), Scanner(src))
 
 
 @pytest.mark.parametrize('src', ['"this is a string"'])
@@ -43,5 +42,5 @@ def test_parsing_words_appends_a_word_reference_to_parse_tree(parser):
 
 @pytest.mark.parametrize('src', ['frobulate'])
 def test_parsing_words_raises_parse_error_if_word_is_not_defined(parser):
-    with pytest.raises(YakParseError):
+    with pytest.raises(ParseError):
         parse_tree = parser.parse()

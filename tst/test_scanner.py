@@ -1,11 +1,10 @@
 import pytest
 
-from yak.parse import Scanner, Token
-from yak.parse.scanner import YakScanError, YakScanner
+from yak.parsing import Scanner, ScanError, Token
 
 
 def new_scanner(source: str) -> Scanner:
-    return YakScanner(source)
+    return Scanner(source)
 
 
 def test_scan_char_returns_current_char():
@@ -50,5 +49,5 @@ def test_scan_token_returns_none_for_empty_source_text():
 
 
 def test_scan_token_raises_scanner_error_on_scanning_errors():
-    with pytest.raises(YakScanError):
+    with pytest.raises(ScanError):
         new_scanner('"this').scan_token()
