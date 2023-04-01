@@ -25,16 +25,15 @@ class YakVirtualMachine:
     def __post_init__(self):
         self.codebase = Codebase()
 
-    def start(self) -> int:
-        self.init()
+    def init(self) -> int:
+        self.bootstrap()
         self.run()
         return self.shut_down()
 
-    def init(self) -> None:
+    def bootstrap(self) -> None:
         LOG.info('booting up...')
         self.init_builtins()
-        self.bootstrap()
-        self.run()
+        self.running = True
 
     def init_builtins(self):
         LOG.info('initializing builtins...')
@@ -45,14 +44,10 @@ class YakVirtualMachine:
         self.codebase.put_vocab(PARSING)
         self.codebase.put_vocab(SYNTAX)
 
-    def bootstrap(self) -> None:
-        self.running = True
-        pass
-
     def run(self) -> None:
-        iter_count = int(os.getenv('ITERCOUNT', '5'))
-        for i in range(iter_count):
-            LOG.info(f'executing: {i}!')
+        bootstrap_word = self.fetch_word('bootstrap')
+        LOG.info(self.codebase)
+        Interpreter(self).init(bootstrap_word)
 
     def shut_down(self) -> int:
         LOG.info('shutting down...')
@@ -62,8 +57,7 @@ class YakVirtualMachine:
     def fetch_word(self, ref: WordRef|str, vocabulary_name: str|None = None) -> Word|None:
         # TODO do this right...
         # requires vocabulary parsing, which requires parse words.
-        word = None
         for vocab in self.codebase.vocabularies.values():
-            if (word := vocab.fetch(str(ref))) is None:
-                continue
-        return word
+            if (word := vocab.fetch(str(ref))) is not None:
+                return word
+        return None

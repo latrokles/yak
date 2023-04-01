@@ -24,11 +24,13 @@ def print_object(value: Value) -> str:
 
     match value:
         case bool():
-            return repr(value)[0].lower()
+            return str(value)[0].lower()
+        case str():
+            return repr(value).replace("'", '"')
         case YakPrimitive():
             return value.print_object()
         case _:
-            return repr(value)
+            return str(value)
 
 
 @dataclass(frozen=True)

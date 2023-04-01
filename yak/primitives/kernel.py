@@ -16,6 +16,7 @@ def print_line(interpreter: Interpreter) -> None:
 def show_stack(interpreter: Interpreter) -> None:
     """( -- )"""
     interpreter.datastack.push(interpreter.datastack)
+    print('---- data stack:')
     print_line(interpreter)
 
 

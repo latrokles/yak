@@ -1,9 +1,12 @@
+import traceback
+
 from dataclasses import dataclass
 
-from yak.primitives import Value, YakError, YakUndefinedError
+from yak.primitives import Value, YakError, YakUndefinedError, print_object
 from yak.primitives.quotation import Quotation
 from yak.primitives.stack import Stack
 from yak.primitives.word import Word, WordRef
+from yak.util import LOG
 
 
 @dataclass
@@ -17,14 +20,16 @@ class Interpreter:
     retainstack: Stack|None = None
 
     def __post_init__(self):
-        self.datastack = (self.datastack or Stack('data'))
-        self.callstack = (self.callstack or Stack('call'))
-        self.errorstack = (self.errorstack or Stack('error'))
-        self.retainstack = (self.retainstack or Stack('retain'))
+        self.datastack = (self.datastack or Stack())
+        self.callstack = (self.callstack or Stack())
+        self.errorstack = (self.errorstack or Stack())
+        self.retainstack = (self.retainstack or Stack())
 
     def init(self, word: Word) -> None:
+        LOG.info(f'initializing interpreter with word: {word.name}')
         self.datastack.push(self.get_init_defn(word))
         self.call()
+        self.run()
 
     def get_init_defn(self, word: Word) -> Quotation:
         if word.primitive:
@@ -60,8 +65,10 @@ class Interpreter:
 
         If the callframe is empty, we've reached the end of the interpreter's word.
         """
+        self.active = True
         while self.active:
             try:
+                LOG.info(f'callframe: {print_object(self.callframe)}')
                 if self.callframe is None or self.callframe.empty:
                     if self.callstack.empty():
                         break
@@ -74,6 +81,7 @@ class Interpreter:
                 self.callframe = self.callframe.tail
                 self.eval(to_evaluate)
             except Exception as e:
+                LOG.error(f'Something went wrong: {e}')
                 if self.handle_error(e):
                     return
 
@@ -84,7 +92,7 @@ class Interpreter:
             self.datastack.push(value)
             return
 
-        self.execute(self, value)
+        self.execute(value)
 
     def execute(self, word_ref: WordRef) -> None:
         try:
@@ -120,7 +128,6 @@ class Interpreter:
         # TODO account for vocabulary loading order resolution.
         if (word := self.vm.fetch_word(name)) is None:
             raise YakUndefinedError(f'word={name} is not defined.')
-        print(f'Found word -> {word}')
         return word
 
     def reset(self) -> None:

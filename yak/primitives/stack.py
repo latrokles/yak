@@ -1,6 +1,6 @@
 from collections import deque
 
-from yak.primitives import Value, YakError, YakPrimitive
+from yak.primitives import Value, YakError, YakPrimitive, print_object
 
 
 class YakStackError(YakError):
@@ -62,7 +62,7 @@ class Stack(deque, YakPrimitive):
         :returns: `True` if stack is empty, `False` otherwise.
         :rtype: bool.
         """
-        return self.count() == 0
+        return self.count == 0
 
     def not_empty(self) -> bool:
         """
@@ -87,5 +87,7 @@ class Stack(deque, YakPrimitive):
             err = f'Underflow: expected={count}, actual={self.count}'
             raise YakStackError(err)
 
-
-
+    def print_object(self) -> str:
+        contents = [print_object(value) for value in self]
+        contents[-1] = f'{contents[-1]} <- TOS'
+        return '\n'.join(contents)

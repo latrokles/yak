@@ -10,13 +10,13 @@ __VOCAB__ = 'parsing'
 def make_scanner(interpreter: Interpreter) -> None:
     """( str -- scanner )"""
     src = interpreter.datastack.pop()
-    self.datastack.push(Scanner(src))
+    interpreter.datastack.push(Scanner(src))
 
 
 def parse(interpreter: Interpreter) -> None:
     """( src -- quot )"""
     make_scanner(interpreter)
-    parser = Scanner(interpreter, interpreter.datastack.pop())
+    parser = Parser(interpreter, interpreter.datastack.pop())
     parser.parse()
 
 
