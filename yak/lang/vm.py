@@ -6,6 +6,11 @@ from dataclasses import dataclass, field
 
 from yak.lang.primitives import Vocabulary, Word, WordRef
 from yak.lang.primitives.task import Task
+from yak.lang.primitives.bootstrap import BOOTSTRAP
+from yak.lang.primitives.combinators import COMBINATORS
+from yak.lang.primitives.kernel import KERNEL
+from yak.lang.primitives.io import IO
+from yak.lang.primitives.parsing import PARSING
 from yak.lang.primitives.syntax import SYNTAX
 from yak.util import LOG
 
@@ -29,6 +34,11 @@ class YakVirtualMachine:
 
     def init_builtins(self):
         LOG.info('initializing builtins...')
+        self.vocabularies[BOOTSTRAP.name] = BOOTSTRAP
+        self.vocabularies[COMBINATORS.name] = COMBINATORS
+        self.vocabularies[IO.name] = IO
+        self.vocabularies[KERNEL.name] = KERNEL
+        self.vocabularies[PARSING.name] = PARSING
         self.vocabularies[SYNTAX.name] = SYNTAX
 
     def bootstrap(self) -> None:
