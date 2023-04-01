@@ -1,9 +1,9 @@
 import pytest
 
+from yak.interpreter import Interpreter
 from yak.parsing import Parser, ParseError, Scanner
 from yak.primitives import WordRef
 from yak.primitives.quotation import Quotation
-from yak.primitives.task import Task
 from yak.vm import YakVirtualMachine
 
 
@@ -12,7 +12,7 @@ def parser(src) -> Parser:
     vm = YakVirtualMachine()
     vm.init()
 
-    return Parser(Task(vm), Scanner(src))
+    return Parser(Interpreter(vm), Scanner(src))
 
 
 @pytest.mark.parametrize('src', ['"this is a string"'])

@@ -1,21 +1,22 @@
+from yak.interpreter import Interpreter
 from yak.primitives import Value, YakPrimitive
-from yak.primitives import Task, print_object
+from yak.primitives import print_object
 from yak.primitives.vocabulary import define_vocabulary
 from yak.primitives.word import define_primitive
 
 __VOCAB__ = 'kernel'
 
 
-def print_line(task: Task) -> None:
+def print_line(interpreter: Interpreter) -> None:
     """( any -- )"""
-    value = task.datastack.pop()
+    value = interpreter.datastack.pop()
     print(print_object(value))
 
 
-def show_stack(task: Task) -> None:
+def show_stack(interpreter: Interpreter) -> None:
     """( -- )"""
-    task.datastack.push(task.datastack)
-    print_line(task)
+    interpreter.datastack.push(interpreter.datastack)
+    print_line(interpreter)
 
 
 KERNEL = define_vocabulary(__VOCAB__)

@@ -1,13 +1,13 @@
-from yak.primitives.task import Task
+from yak.interpreter import Interpreter
 from yak.primitives.vocabulary import define_vocabulary
 from yak.primitives.word import define_primitive
 
 __VOCAB__ = 'combinators'
 
 
-def call(task: Task) -> None:
+def call(interpreter: Interpreter) -> None:
     """( quot -- | | -- quot )"""
-    task.call()
+    interpreter.call()
 
 
 COMBINATORS = define_vocabulary(__VOCAB__)

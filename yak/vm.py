@@ -4,8 +4,8 @@ import os
 
 from dataclasses import dataclass, field
 
+from yak.interpreter import Interpreter
 from yak.primitives import Vocabulary, Word, WordRef
-from yak.primitives.task import Task
 from yak.primitives.bootstrap import BOOTSTRAP
 from yak.primitives.combinators import COMBINATORS
 from yak.primitives.kernel import KERNEL
@@ -18,7 +18,6 @@ from yak.util import LOG
 @dataclass
 class YakVirtualMachine:
     running: bool = False
-    tasks: list[Task] = field(default_factory=list)
     vocabularies: dict[str, Vocabulary] = field(default_factory=dict)
 
     def start(self) -> int:

@@ -1,11 +1,11 @@
 from dataclasses import dataclass
 
-from yak.primitives import Stack, Value, Word, WordRef, YakError, YakPrimitive, YakUndefinedError
+from yak.primitives import Stack, Value, Word, WordRef, YakError, YakUndefinedError
 from yak.primitives.quotation import Quotation
 
 
 @dataclass
-class Task(YakPrimitive):
+class Interpreter:
     vm: ...
     active: bool = False
     callframe: Quotation|None = None
@@ -48,9 +48,9 @@ class Task(YakPrimitive):
         them.
 
         If the callframe is None, we look for a quotation in the callstack to
-        execute and if None is found we've reached the end of the task's word.
+        execute and if None is found we've reached the end of the interpreter's word.
 
-        If the callframe is empty, we've reached the end of the task's word.
+        If the callframe is empty, we've reached the end of the interpreter's word.
         """
         while self.active:
             try:

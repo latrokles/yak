@@ -1,4 +1,4 @@
-from yak.primitives.task import Task
+from yak.interpreter import Interpreter
 from yak.primitives.vocabulary import define_vocabulary
 from yak.primitives.word import define_primitive
 
@@ -6,17 +6,17 @@ from yak.primitives.word import define_primitive
 __VOCAB__ = 'io'
 
 
-def get_file_contents(task: Task):
+def get_file_contents(interpreter: Interpreter):
     """( str -- str )"""
-    pathname = task.datastack.pop()
+    pathname = interpreter.datastack.pop()
     with open(pathname, mode='r', encoding='utf-8') as f:
-        task.datastack.push(f.read())
+        interpreter.datastack.push(f.read())
 
 
-def set_file_contents(task: Task):
+def set_file_contents(interpreter: Interpreter):
     """( str str -- )"""
-    contents = task.datastack.pop()
-    pathname = task.datastack.pop()
+    contents = interpreter.datastack.pop()
+    pathname = interpreter.datastack.pop()
     with open(pathname, mode='w', encoding='utf-8') as f:
         f.write(contents)
 

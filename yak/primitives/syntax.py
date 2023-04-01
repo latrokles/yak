@@ -1,21 +1,21 @@
-from yak.primitives.task import Task
+from yak.interpreter import Interpreter
 from yak.primitives.vocabulary import define_vocabulary
 from yak.primitives.word import define_primitive
 
 
-def true(task: Task):
+def true(interpreter: Interpreter):
     """( -- t )"""
-    task.datastack.push(True)
+    interpreter.datastack.push(True)
 
 
-def false(task: Task):
+def false(interpreter: Interpreter):
     """( -- f )"""
-    task.datastack.push(False)
+    interpreter.datastack.push(False)
 
 
-def nil(task: Task):
+def nil(interpreter: Interpreter):
     """( -- nil )"""
-    task.datastack.push(None)
+    interpreter.datastack.push(None)
 
 
 SYNTAX = define_vocabulary('syntax')
