@@ -1,14 +1,23 @@
 from yak.lang.primitives import Value, YakPrimitive
+from yak.lang.primitives import Task, print_object
+from yak.lang.primitives.vocabulary import define_vocabulary
+from yak.lang.primitives.word import define_primitive
+
+__VOCAB__ = 'kernel'
 
 
-def print_object(value: Value) -> str:
-    if value is None:
-        return 'nil'
+def print_line(task: Task) -> None:
+    """( any -- )"""
+    value = task.datastack.pop()
+    print(print_object(value))
 
-    match value:
-        case bool():
-            return repr(value)[0].lower()
-        case YakPrimitive():
-            return value.print_object()
-        case _:
-            return repr(value)
+
+def show_stack(task: Task) -> None:
+    """( -- )"""
+    task.datastack.push(task.datastack)
+    print_line(task)
+
+
+KERNEL = define_vocabulary(__VOCAB__)
+KERNEL.store(define_primitive(__VOCAB__, 'print-line', print_line))
+KERNEL.store(define_primitive(__VOCAB__, 'show-stack', show_stack))

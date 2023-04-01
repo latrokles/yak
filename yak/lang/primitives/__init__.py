@@ -22,6 +22,19 @@ class YakStackError(YakError):
     """Raised during a stack operation failure."""
 
 
+def print_object(value: Value) -> str:
+    if value is None:
+        return 'nil'
+
+    match value:
+        case bool():
+            return repr(value)[0].lower()
+        case YakPrimitive():
+            return value.print_object()
+        case _:
+            return repr(value)
+
+
 @dataclass(frozen=True)
 class Symbol(YakPrimitive):
     value: str
