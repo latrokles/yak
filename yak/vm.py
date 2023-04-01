@@ -4,6 +4,7 @@ import os
 
 from dataclasses import dataclass, field
 
+from yak.codebase import Codebase
 from yak.interpreter import Interpreter
 from yak.primitives import Vocabulary, Word, WordRef
 from yak.primitives.bootstrap import BOOTSTRAP
@@ -18,7 +19,10 @@ from yak.util import LOG
 @dataclass
 class YakVirtualMachine:
     running: bool = False
-    vocabularies: dict[str, Vocabulary] = field(default_factory=dict)
+    codebase: Codebase = field(init=False)
+
+    def __post_init__(self):
+        self.codebase = Codebase()
 
     def start(self) -> int:
         self.init()
@@ -33,12 +37,12 @@ class YakVirtualMachine:
 
     def init_builtins(self):
         LOG.info('initializing builtins...')
-        self.vocabularies[BOOTSTRAP.name] = BOOTSTRAP
-        self.vocabularies[COMBINATORS.name] = COMBINATORS
-        self.vocabularies[IO.name] = IO
-        self.vocabularies[KERNEL.name] = KERNEL
-        self.vocabularies[PARSING.name] = PARSING
-        self.vocabularies[SYNTAX.name] = SYNTAX
+        self.codebase.put_vocab(BOOTSTRAP)
+        self.codebase.put_vocab(COMBINATORS)
+        self.codebase.put_vocab(IO)
+        self.codebase.put_vocab(KERNEL)
+        self.codebase.put_vocab(PARSING)
+        self.codebase.put_vocab(SYNTAX)
 
     def bootstrap(self) -> None:
         self.running = True
@@ -55,9 +59,10 @@ class YakVirtualMachine:
 
 
     def fetch_word(self, ref: WordRef|str, vocabulary_name: str|None = None) -> Word|None:
-        # TODO implement vocabulary lookup
+        # TODO do this right...
+        # requires vocabulary parsing, which requires parse words.
         word = None
-        for vocab in self.vocabularies.values():
+        for vocab in self.codebase.vocabularies.values():
             if (word := vocab.fetch(str(ref))) is None:
                 continue
         return word

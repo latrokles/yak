@@ -1,62 +1,24 @@
 from __future__ import annotations
-
-import os
-import sqlite3
-
 from dataclasses import dataclass, field
-from pathlib import Path
 
-
-CODEBASE_DIR = f'{os.getenv("home")}/.yak/'
-DEFAULT_NAME = 'user.yakimg'
-
-CREATE_WORDS_TABLE = '''
-CREATE TABLE words (
-  id INTEGER PRIMARY KEY,
-  name TEXT,
-  version INTEGER,
-  source_text TEXT,
-  code_object BLOB
-)
-'''
-
-CREATE_WORD_DEPS = '''
-CREATE TABLE word_deps (
-  word_id INTEGER,
-  dep_id INTEGER
-)
-'''
-
-CREATE_WORD_USAGES = '''
-  word_id INTEGER,
-  used_by INTEGER
-)
-'''
+from yak.primitives import YakUndefinedError
 
 
 @dataclass
 class Codebase:
-    name: str
-    path: Path
+    vocabularies: dict[str, Vocabulary] = field(default_factory=dict)
 
-    def __post_init__(self):
-        
-        pass
+    def put_vocab(self, vocab: Vocabulary) -> Codebase:
+        self.vocabularies[vocab.name] = vocab
+        return self
 
-    @staticmethod
-    def open(name: str = DEFAULT_CODEBASE,
-             dir: str = CODEBASE_DIR) -> Codebase:
-        codebases = Path(dir)
-        codebase_path = codebases / name
+    def get_vocab(self, name: str) -> Codebase:
+        if (vocab := self.vocabularies.get(name)) is None:
+            raise YakUndefinedError(f'There is no vocabulary with name={vocab_name}')
+        return vocab
 
-        if codebase_path.exists():
-            return Codebase(name, codebase_path)
-        return Codebase.create(name, codebase_path)
+    def put_word(self, word: Word) -> None:
+        self.get_vocab(word.vocabulary).store(word)
 
-    @staticmethod
-    def create(name: str, path: Path) -> Codebase:
-        with sqlite3.connect(str(path)) as conn:
-             conn.execute(CREATE_WORDS_TABLE)
-             conn.execute(CREATE_WORD_DEPS)
-             conn.execute(CREATE_WORD_USAGES)
-        return Codebase(name, path)
+    def get_word(self, ref: WordRef|str, vocab_name: str) -> Word|None:
+        return self.get_vocab(vocab_name).fetch(str(ref))
