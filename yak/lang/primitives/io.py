@@ -1,3 +1,4 @@
+from yak.lang.primitives.task import Task
 from yak.lang.primitives.vocabulary import define_vocabulary
 from yak.lang.primitives.word import define_primitive
 
@@ -21,5 +22,5 @@ def set_file_contents(task: Task):
 
 
 IO = define_vocabulary(__VOCAB__)
-IO.store(define_primitive(__VOCAB__, 'file-contents', get_file_contents)
-IO.store(define_primitive(__VOCAB__, 'file-contents=', set_file_contents)
+IO.store(define_primitive(__VOCAB__, 'file-contents', get_file_contents))
+IO.store(define_primitive(__VOCAB__, 'file-contents=', set_file_contents))
