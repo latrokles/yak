@@ -1,15 +1,15 @@
 from collections import deque
+from collections.abc import Iterator
 
 from yak.primitives import Value, YakError, YakPrimitive, print_object
 
 
-class YakStackError(YakError):
+class StackUnderflowError(YakError):
     """Raised during a stack operation failure."""
 
 
 class Stack(deque, YakPrimitive):
-    """Stack data structure. Mostly a wrapper around `collections.deque`."""
-    name: str
+    """YakPrimitive data structure. Mostly a wrapper around `collections.deque`."""
 
     @property
     def count(self) -> int:
@@ -85,7 +85,14 @@ class Stack(deque, YakPrimitive):
         """
         if count > self.count:
             err = f'Underflow: expected={count}, actual={self.count}'
-            raise YakStackError(err)
+            raise StackUnderflowError(err)
+
+    def from_the_top(self) -> Iterator[Value]:
+        """
+        :returns: a reversed iterator over the values in the stack.
+        :rtype: Iterator[Value].
+        """
+        return reversed(self)
 
     def print_object(self) -> str:
         contents = [print_object(value) for value in self]
