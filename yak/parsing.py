@@ -128,7 +128,7 @@ class ParseMode(Enum):
 
 @dataclass
 class Parser:
-    task: ...
+    interpreter: ...
     scanner: Scanner
     mode: ParseMode = ParseMode.PARSE
     parsers: tuple[Callable] = field(init=False)
@@ -140,14 +140,14 @@ class Parser:
 
     @property
     def current_state(self) -> list[Value]:
-        accum = self.task.datastack.peek()
+        accum = self.interpreter.datastack.peek()
         if not isinstance(accum, Quotation):
             msg = f'Invalid Parser State. expected=Quotation, found={type(accum)}'
             raise ParseError(msg)
         return accum
 
     def push_state(self, quote: Quotation) -> None:
-        self.task.datastack.push(quote)
+        self.interpreter.datastack.push(quote)
 
     def parse(self) -> Value:
         while (value := self.next_value()) != Parser.EOF:
@@ -187,9 +187,9 @@ class Parser:
 
     def parse_word(self, token: Token) -> WordRef|None:
         try:
-            word = self.task.fetch_word(token.text)
+            word = self.interpreter.fetch_word(token.text)
             if word.parsing:
-                word.eval(self.task)
+                word.eval(self.interpreter)
             return word.ref
         except Exception as e:
             raise ParseError(f'Unable to parse word: {e}')
