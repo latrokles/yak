@@ -1,3 +1,4 @@
+from __future__ import annotations
 from dataclasses import dataclass, field
 from yak.primitives.word import Word
 
@@ -12,9 +13,10 @@ class Vocabulary:
     def count(self) -> int:
         return len(self.defs)
 
-    def store(self, word: Word):
+    def store(self, word: Word) -> Vocabulary:
         self.defs[word.name] = word
         self.dirty = True
+        return self
 
     def fetch(self, name: str) -> Word:
         return self.defs.get(name)

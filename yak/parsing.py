@@ -8,6 +8,7 @@ from typing import Callable, ClassVar
 from yak.primitives import Value, YakError, YakPrimitive
 from yak.primitives.numbers import is_int, is_float
 from yak.primitives.quotation import Quotation
+from yak.primitives.stack import Stack
 from yak.primitives.strings import blank
 from yak.primitives.word import Word, WordRef
 from yak.util import LOG
@@ -132,16 +133,19 @@ class ParseMode(Enum):
 class Parser:
     interpreter: ...
     scanner: Scanner
+    exclusive: bool = False
     mode: ParseMode = ParseMode.PARSE
     parsers: tuple[Callable] = field(init=False)
+    expected_delimiters: Stack = field(init=False)
     EOF: ClassVar[str] = '#EOF#'
 
     def __post_init__(self):
         self.parsers = (self.parse_string, self.parse_number, self.parse_word)
-        self.push_state(Quotation())
+        self.interpreter.datastack.push(Quotation())
+        self.expected_delimiters = Stack()
 
     @property
-    def current_state(self) -> list[Value]:
+    def current_accumulator(self) -> list[Value]:
         accum = self.interpreter.datastack.peek()
         if not isinstance(accum, Quotation):
             msg = f'Invalid Parser State. expected=Quotation, found={type(accum)}'
@@ -157,16 +161,37 @@ class Parser:
         self.mode = prev_mode
         LOG.info('leaving raw mode')
 
-    def push_state(self, quote: Quotation) -> None:
-        self.interpreter.datastack.push(quote)
+    def push_state(self, delimiter: str|None = None) -> None:
+        if delimiter is not None:
+            self.expected_delimiters.push(delimiter)
+
+    def pop_state(self, delimiter: str|None):
+        if delimiter is None:
+            return
+
+        if self.expected_delimiters.peek() != delimiter:
+            raise ParseError(f'Invalid delimiter: expected `{delimiter}`, found `{self.expected_delimiters.peek()}`')
+        self.expected_delimiters.pop()
+
+    def push_exclusive_state(self, delimiter: str):
+        if self.exclusive:
+            raise ParseError('Cannot nest exclusive definitions!')
+        self.exclusive = True
+        self.push_state(delimiter)
+
+    def pop_exclusive_state(self, delimiter: str):
+        if not self.exclusive:
+            raise ParseError('Invalid state: parser is not inside an exclusive definition.')
+        self.pop_state(delimiter)
+        self.exclusive = False
 
     def parse(self) -> Value:
         while (value := self.next_value()) != Parser.EOF:
             if isinstance(value, WordRef) and value.parsing:
                 continue
-            self.current_state.append(value)
+            self.current_accumulator.append(value)
 
-        return self.current_state
+        return self.current_accumulator
 
     def next_value(self) -> Value:
         if (token := self.scanner.scan_token()) is None:
@@ -196,7 +221,6 @@ class Parser:
         return None
 
     def parse_word(self, token: Token) -> WordRef|str|None:
-        LOG.info(f'parsing word from token: {token}')
         if self.mode == ParseMode.RAW:
             return token.text
 

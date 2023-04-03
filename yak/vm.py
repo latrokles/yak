@@ -12,9 +12,10 @@ from yak.primitives.kernel import KERNEL
 from yak.primitives.io import IO
 from yak.primitives.parsing import PARSING
 from yak.primitives.syntax import SYNTAX
-from yak.primitives.vocabulary import Vocabulary
+from yak.primitives.vocabulary import Vocabulary, def_vocabulary
 from yak.primitives.word import Word, WordRef
 from yak.util import LOG
+from yak.vocab.words import WORDS
 
 
 @dataclass
@@ -43,6 +44,7 @@ class YakVirtualMachine:
         self.codebase.put_vocab(KERNEL)
         self.codebase.put_vocab(PARSING)
         self.codebase.put_vocab(SYNTAX)
+        self.codebase.put_vocab(WORDS)
 
     def run(self) -> None:
         bootstrap_word = self.fetch_word('bootstrap')
@@ -53,6 +55,12 @@ class YakVirtualMachine:
         LOG.info('shutting down...')
         return 0
 
+    def vocab_defined(self, vocab_name: str) -> bool:
+        return self.codebase.has_vocab(vocab_name)
+
+    def new_vocab(self, vocab_name: str) -> bool:
+        LOG.info(f'defining new vocabulary: {vocab_name}')
+        self.codebase.put_vocab(def_vocabulary(vocab_name))
 
     def fetch_word(self, ref: WordRef|str, vocabulary_name: str|None = None) -> Word|None:
         # TODO do this right...
@@ -61,3 +69,6 @@ class YakVirtualMachine:
             if (word := vocab.fetch(str(ref))) is not None:
                 return word
         return None
+
+    def store_word(self, word: Word):
+        self.codebase.put_word(word)

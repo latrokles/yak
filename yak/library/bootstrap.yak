@@ -8,3 +8,6 @@ f
 nil
 3
 show-stack
+: print-twice print-line print-line ;
+print-twice
+show-stack

@@ -7,6 +7,7 @@ from yak.primitives import Value
 from yak.primitives.quotation import Quotation
 from yak.primitives.namespace import Namespace
 from yak.primitives.stack import Stack
+from yak.primitives.vocabulary import def_vocabulary
 from yak.primitives.word import Word, WordRef
 from yak.util import LOG
 
@@ -65,6 +66,10 @@ class Interpreter:
 
     def set_current_vocabulary(self, vocab_name: str):
         LOG.info(f'switching to vocab: {vocab_name}')
+        if not self.vm.vocab_defined(vocab_name):
+            LOG.info(f'vocabulary not defined: {vocab_name}')
+            self.vm.new_vocab(vocab_name)
+
         self.current_vocab = vocab_name
 
     def call(self) -> None:
@@ -160,6 +165,9 @@ class Interpreter:
         if (word := self.vm.fetch_word(name)) is None:
             raise YakUndefinedError(f'word={name} is not defined.')
         return word
+
+    def store_word(self, word: Word):
+        self.vm.store_word(word)
 
     def reset(self) -> None:
         self.callstack.clear()

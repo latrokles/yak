@@ -14,7 +14,7 @@ class WordRef(YakPrimitive):
 
     def __str__(self) -> str:
         return self.name
-    
+
     def print_object(self) -> str:
         return self.name
 
@@ -47,11 +47,19 @@ class PrimitiveWord(Word):
 
 @dataclass
 class CompoundWord(Word):
-    defn: list[Word] = field(default_factory=list)
+    defn: Quotation[Value] = field(default_factory=list)
 
     def eval(self, interpreter):
+        if self.parsing:
+            self.exec(interpreter)
+            return
+
         interpreter.datastack.push(self.defn)
         interpreter.call()
+
+    def exec(self, interpreter):
+        for val in self.defn:
+            interpreter.eval(val)
 
 
 def def_compound(vocabulary_name: str,
@@ -67,3 +75,15 @@ def def_primitive(vocabulary_name: str,
                   defn: Callable,
                   parse: bool = False) -> Word:
     return PrimitiveWord(name, vocabulary_name, parse, defn.__doc__, defn)
+
+
+def define_word(interpreter):
+    """( word defn -- )"""
+    # TODO add stack effect
+    # TODO add stack effect cheking
+    # TODO add word metadata
+    # TODO add word docs
+    defn = interpreter.datastack.pop()
+    name = interpreter.datastack.pop()
+    word = def_compound(interpreter.current_vocab, name, defn)
+    interpreter.store_word(word)

@@ -9,6 +9,9 @@ from yak.util import LOG
 class Codebase:
     vocabularies: dict[str, Vocabulary] = field(default_factory=dict)
 
+    def has_vocab(self, vocab_name: str) -> bool:
+        return vocab_name in self.vocabularies.keys()
+
     def put_vocab(self, vocab: Vocabulary) -> Codebase:
         LOG.info(f'loading vocabulary: {vocab.name}')
         self.vocabularies[vocab.name] = vocab
