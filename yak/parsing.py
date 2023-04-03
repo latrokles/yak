@@ -1,4 +1,5 @@
 from __future__ import annotations
+from contextlib import contextmanager
 from dataclasses import InitVar, dataclass, field
 from enum import Enum
 from io import StringIO
@@ -9,6 +10,7 @@ from yak.primitives.numbers import is_int, is_float
 from yak.primitives.quotation import Quotation
 from yak.primitives.strings import blank
 from yak.primitives.word import Word, WordRef
+from yak.util import LOG
 
 
 class ScanError(YakError):
@@ -146,12 +148,24 @@ class Parser:
             raise ParseError(msg)
         return accum
 
+    @contextmanager
+    def raw(self) -> Parser:
+        LOG.info('entering raw mode')
+        prev_mode = self.mode
+        self.mode = ParseMode.RAW
+        yield self
+        self.mode = prev_mode
+        LOG.info('leaving raw mode')
+
     def push_state(self, quote: Quotation) -> None:
         self.interpreter.datastack.push(quote)
 
     def parse(self) -> Value:
         while (value := self.next_value()) != Parser.EOF:
+            if isinstance(value, WordRef) and value.parsing:
+                continue
             self.current_state.append(value)
+
         return self.current_state
 
     def next_value(self) -> Value:
@@ -160,11 +174,7 @@ class Parser:
 
         try:
             for parse in self.parsers:
-
                 if (value := parse(token)) is not None:
-                    # TODO find a better way to handle this
-                    if isinstance(value, WordRef) and value.parsing:
-                        continue
                     return value
 
             raise ParseError(f'Unknown token={token}')
@@ -185,10 +195,15 @@ class Parser:
 
         return None
 
-    def parse_word(self, token: Token) -> WordRef|None:
+    def parse_word(self, token: Token) -> WordRef|str|None:
+        LOG.info(f'parsing word from token: {token}')
+        if self.mode == ParseMode.RAW:
+            return token.text
+
         try:
             word = self.interpreter.fetch_word(token.text)
             if word.parsing:
+                self.interpreter.set_global('*parser*', self)
                 word.eval(self.interpreter)
             return word.ref
         except Exception as e:

@@ -3,7 +3,9 @@ import traceback
 from dataclasses import dataclass
 
 from yak.primitives import Value, YakError, YakUndefinedError, print_object
+from yak.primitives import Value
 from yak.primitives.quotation import Quotation
+from yak.primitives.namespace import Namespace
 from yak.primitives.stack import Stack
 from yak.primitives.word import Word, WordRef
 from yak.util import LOG
@@ -14,19 +16,26 @@ class Interpreter:
     vm: ...
     active: bool = False
     callframe: Quotation|None = None
+    current_vocab: str = '*scratch*'
+
     datastack: Stack|None = None
     callstack: Stack|None = None
     errorstack: Stack|None = None
     retainstack: Stack|None = None
+    namestack: Stack|None = None
+    GLOBAL: Namespace|None = None
 
     def __post_init__(self):
         self.datastack = (self.datastack or Stack())
         self.callstack = (self.callstack or Stack())
         self.errorstack = (self.errorstack or Stack())
         self.retainstack = (self.retainstack or Stack())
+        self.namestack = (self.namestack or Stack())
+        self.GLOBAL = (self.GLOBAL or Namespace('global'))
 
     def init(self, word: Word) -> None:
         LOG.info(f'initializing interpreter with word: {word.name}')
+        self.namestack.push(self.GLOBAL)
         self.datastack.push(self.get_init_defn(word))
         self.call()
         self.run()
@@ -35,6 +44,28 @@ class Interpreter:
         if word.primitive:
             return Quotation([word.ref])
         return word.defn
+
+    def global_namespace(self) -> Namespace:
+        return self.GLOBAL
+
+    def get_variable(self, name: str) -> Value|None:
+        for namespace in self.namestack.from_the_top():
+            if namespace.has_binding(name):
+                return namespace.get_binding(name)
+        return None
+
+    def set_variable(self, var: str, val: Value):
+        self.namestack.peek().set_binding(var, val)
+
+    def get_global(self, var: str) -> Value:
+        return self.GLOBAL.get_binding(var)
+
+    def set_global(self, var: str, val: Value):
+        self.GLOBAL.set_binding(var, val)
+
+    def set_current_vocabulary(self, vocab_name: str):
+        LOG.info(f'switching to vocab: {vocab_name}')
+        self.current_vocab = vocab_name
 
     def call(self) -> None:
         """
