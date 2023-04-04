@@ -9,7 +9,9 @@ from yak.primitives.namespace import Namespace
 from yak.primitives.stack import Stack
 from yak.primitives.vocabulary import def_vocabulary
 from yak.primitives.word import Word, WordRef
-from yak.util import LOG
+from yak.util import get_logger
+
+LOG = get_logger()
 
 
 @dataclass

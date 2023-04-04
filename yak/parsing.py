@@ -11,7 +11,9 @@ from yak.primitives.quotation import Quotation
 from yak.primitives.stack import Stack
 from yak.primitives.strings import blank
 from yak.primitives.word import Word, WordRef
-from yak.util import LOG
+from yak.util import get_logger
+
+LOG = get_logger()
 
 
 class ScanError(YakError):

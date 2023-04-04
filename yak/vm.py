@@ -14,8 +14,10 @@ from yak.primitives.parsing import PARSING
 from yak.primitives.syntax import SYNTAX
 from yak.primitives.vocabulary import Vocabulary, def_vocabulary
 from yak.primitives.word import Word, WordRef
-from yak.util import LOG
+from yak.util import get_logger
 from yak.vocab.words import WORDS
+
+LOG = get_logger()
 
 
 @dataclass

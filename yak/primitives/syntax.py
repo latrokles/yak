@@ -43,7 +43,6 @@ def DEFINE(interpreter: Interpreter):
         interpreter.datastack.push(definer)
         interpreter.datastack.push(Quotation())
         parser.push_exclusive_state(';')
-        print(interpreter.datastack)
 
 
 def ENDDEF(interpreter: Interpreter):

@@ -2,7 +2,9 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 
 from yak.primitives import YakUndefinedError
-from yak.util import LOG
+from yak.util import get_logger
+
+LOG = get_logger()
 
 
 @dataclass
