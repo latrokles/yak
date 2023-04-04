@@ -21,6 +21,6 @@ def set_file_contents(interpreter: Interpreter):
         f.write(contents)
 
 
-IO = def_vocabulary(__VOCAB__)
-IO.store(def_primitive(__VOCAB__, 'file-contents', get_file_contents))
-IO.store(def_primitive(__VOCAB__, 'file-contents=', set_file_contents))
+IO = (def_vocabulary(__VOCAB__)
+      .store(def_primitive(__VOCAB__, 'file-contents', get_file_contents))
+      .store(def_primitive(__VOCAB__, 'file-contents=', set_file_contents)))

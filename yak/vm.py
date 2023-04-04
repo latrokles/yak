@@ -6,15 +6,15 @@ from dataclasses import dataclass, field
 
 from yak.codebase import Codebase
 from yak.interpreter import Interpreter
-from yak.primitives.bootstrap import BOOTSTRAP
-from yak.primitives.combinators import COMBINATORS
-from yak.primitives.kernel import KERNEL
-from yak.primitives.io import IO
-from yak.primitives.parsing import PARSING
-from yak.primitives.syntax import SYNTAX
 from yak.primitives.vocabulary import Vocabulary, def_vocabulary
 from yak.primitives.word import Word, WordRef
 from yak.util import get_logger
+from yak.vocab.bootstrap import BOOTSTRAP
+from yak.vocab.combinators import COMBINATORS
+from yak.vocab.io import IO
+from yak.vocab.kernel import KERNEL
+from yak.vocab.parse import PARSE
+from yak.vocab.syntax import SYNTAX
 from yak.vocab.words import WORDS
 
 LOG = get_logger()
@@ -44,7 +44,7 @@ class YakVirtualMachine:
         self.codebase.put_vocab(COMBINATORS)
         self.codebase.put_vocab(IO)
         self.codebase.put_vocab(KERNEL)
-        self.codebase.put_vocab(PARSING)
+        self.codebase.put_vocab(PARSE)
         self.codebase.put_vocab(SYNTAX)
         self.codebase.put_vocab(WORDS)
 

@@ -1,9 +1,9 @@
 from yak.interpreter import Interpreter
-from yak.primitives.combinators import call
-from yak.primitives.kernel import swap
 from yak.primitives.quotation import Quotation
 from yak.primitives.vocabulary import def_vocabulary
 from yak.primitives.word import def_primitive
+from yak.vocab.combinators import call
+from yak.vocab.kernel import swap
 
 
 __VOCAB__ = 'syntax'
@@ -54,10 +54,10 @@ def ENDDEF(interpreter: Interpreter):
     parser.pop_exclusive_state(';')
 
 
-SYNTAX = def_vocabulary('syntax')
-SYNTAX.store(def_primitive(__VOCAB__, 't', true))
-SYNTAX.store(def_primitive(__VOCAB__, 'f', false))
-SYNTAX.store(def_primitive(__VOCAB__, 'nil', nil))
-SYNTAX.store(def_primitive(__VOCAB__, 'IN:', IN, parse=True))
-SYNTAX.store(def_primitive(__VOCAB__, ':', DEFINE, parse=True))
-SYNTAX.store(def_primitive(__VOCAB__, ';', ENDDEF, parse=True))
+SYNTAX = (def_vocabulary('syntax')
+          .store(def_primitive(__VOCAB__, 't', true))
+          .store(def_primitive(__VOCAB__, 'f', false))
+          .store(def_primitive(__VOCAB__, 'nil', nil))
+          .store(def_primitive(__VOCAB__, 'IN:', IN, parse=True))
+          .store(def_primitive(__VOCAB__, ':', DEFINE, parse=True))
+          .store(def_primitive(__VOCAB__, ';', ENDDEF, parse=True)))

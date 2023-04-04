@@ -75,15 +75,3 @@ def def_primitive(vocabulary_name: str,
                   defn: Callable,
                   parse: bool = False) -> Word:
     return PrimitiveWord(name, vocabulary_name, parse, defn.__doc__, defn)
-
-
-def define_word(interpreter):
-    """( word defn -- )"""
-    # TODO add stack effect
-    # TODO add stack effect cheking
-    # TODO add word metadata
-    # TODO add word docs
-    defn = interpreter.datastack.pop()
-    name = interpreter.datastack.pop()
-    word = def_compound(interpreter.current_vocab, name, defn)
-    interpreter.store_word(word)

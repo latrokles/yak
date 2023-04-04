@@ -1,12 +1,12 @@
 import pkg_resources
 
 from yak.interpreter import Interpreter
-from yak.primitives.combinators import COMBINATORS
-from yak.primitives.io import IO
-from yak.primitives.parsing import PARSING
 from yak.primitives.quotation import Quotation
 from yak.primitives.vocabulary import def_vocabulary
 from yak.primitives.word import def_compound, def_primitive
+from yak.vocab.combinators import COMBINATORS
+from yak.vocab.io import IO
+from yak.vocab.parse import PARSE
 
 
 __VOCAB__ = 'bootstrap'
@@ -33,5 +33,5 @@ BOOTSTRAP.store(def_compound(__VOCAB__,
                              Quotation([BOOTSTRAP.fetch('bootstrap-script').ref,
                                         BOOTSTRAP.fetch('resource-path').ref,
                                         IO.fetch('file-contents').ref,
-                                        PARSING.fetch('parse').ref,
+                                        PARSE.fetch('parse').ref,
                                         COMBINATORS.fetch('call').ref])))

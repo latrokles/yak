@@ -4,7 +4,7 @@ from yak.primitives.vocabulary import def_vocabulary
 from yak.primitives.word import def_primitive
 
 
-__VOCAB__ = 'parsing'
+__VOCAB__ = 'parse'
 
 
 def make_scanner(interpreter: Interpreter) -> None:
@@ -20,5 +20,5 @@ def parse(interpreter: Interpreter) -> None:
     parser.parse()
 
 
-PARSING = def_vocabulary(__VOCAB__)
-PARSING.store(def_primitive(__VOCAB__, 'parse', parse))
+PARSE = (def_vocabulary(__VOCAB__)
+         .store(def_primitive(__VOCAB__, 'parse', parse)))

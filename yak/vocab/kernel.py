@@ -26,7 +26,7 @@ def show_stack(interpreter: Interpreter) -> None:
     print_line(interpreter)
 
 
-KERNEL = def_vocabulary(__VOCAB__)
-KERNEL.store(def_primitive(__VOCAB__, 'print-line', print_line))
-KERNEL.store(def_primitive(__VOCAB__, 'show-stack', show_stack))
-KERNEL.store(def_primitive(__VOCAB__, 'swap', swap))
+KERNEL = (def_vocabulary(__VOCAB__)
+          .store(def_primitive(__VOCAB__, 'print-line', print_line))
+          .store(def_primitive(__VOCAB__, 'show-stack', show_stack))
+          .store(def_primitive(__VOCAB__, 'swap', swap)))
