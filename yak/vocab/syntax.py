@@ -31,6 +31,14 @@ def IN(interpreter):
         interpreter.set_current_vocabulary(vocab_name)
 
 
+def USE(interpreter):
+    """( -- )"""
+    parser = interpreter.get_global('*parser*')
+    with parser.raw() as p:
+        vocab_name = p.next_value()
+        interpreter.use(vocab_name)
+
+
 def DEFINE(interpreter):
     """( -- name definer-quot quot )"""
     parser = interpreter.get_global('*parser*')
@@ -58,5 +66,6 @@ SYNTAX = (def_vocabulary('syntax')
           .store(def_primitive(__VOCAB__, 'f', false))
           .store(def_primitive(__VOCAB__, 'nil', nil))
           .store(def_primitive(__VOCAB__, 'IN:', IN, parse=True))
+          .store(def_primitive(__VOCAB__, 'USE:', USE, parse=True))
           .store(def_primitive(__VOCAB__, ':', DEFINE, parse=True))
           .store(def_primitive(__VOCAB__, ';', ENDDEF, parse=True)))

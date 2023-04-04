@@ -1,4 +1,6 @@
 IN: bootstrap
+USE: syntax
+
 "this is a string"
 4.5
 1_000
@@ -8,6 +10,7 @@ f
 nil
 3
 show-stack
+
 : print-twice print-line print-line ;
 print-twice
 show-stack
