@@ -1,4 +1,3 @@
-from yak.interpreter import Interpreter
 from yak.primitives.quotation import Quotation
 from yak.primitives.vocabulary import def_vocabulary
 from yak.primitives.word import def_primitive
@@ -9,22 +8,22 @@ from yak.vocab.kernel import swap
 __VOCAB__ = 'syntax'
 
 
-def true(interpreter: Interpreter):
+def true(interpreter):
     """( -- t )"""
     interpreter.datastack.push(True)
 
 
-def false(interpreter: Interpreter):
+def false(interpreter):
     """( -- f )"""
     interpreter.datastack.push(False)
 
 
-def nil(interpreter: Interpreter):
+def nil(interpreter):
     """( -- nil )"""
     interpreter.datastack.push(None)
 
 
-def IN(interpreter: Interpreter):
+def IN(interpreter):
     """( -- )"""
     parser = interpreter.get_global('*parser*')
     with parser.raw() as p:
@@ -32,7 +31,7 @@ def IN(interpreter: Interpreter):
         interpreter.set_current_vocabulary(vocab_name)
 
 
-def DEFINE(interpreter: Interpreter):
+def DEFINE(interpreter):
     """( -- name definer-quot quot )"""
     parser = interpreter.get_global('*parser*')
 
@@ -45,7 +44,7 @@ def DEFINE(interpreter: Interpreter):
         parser.push_exclusive_state(';')
 
 
-def ENDDEF(interpreter: Interpreter):
+def ENDDEF(interpreter):
     """( word definer -- )"""
     parser = interpreter.get_global('*parser*')
     swap(interpreter)

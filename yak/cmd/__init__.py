@@ -1,7 +1,7 @@
+from yak.hal import YakOS
 from yak.util import set_up_yakdir
-from yak.vm import YakVirtualMachine
 
 
 def yak():
     set_up_yakdir()
-    return YakVirtualMachine().init()
+    return YakOS().init()

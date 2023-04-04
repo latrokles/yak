@@ -1,4 +1,3 @@
-from yak.interpreter import Interpreter
 from yak.primitives import Value, YakPrimitive
 from yak.primitives import print_object
 from yak.primitives.vocabulary import def_vocabulary
@@ -7,19 +6,19 @@ from yak.primitives.word import def_primitive
 __VOCAB__ = 'kernel'
 
 
-def swap(interpreter: Interpreter) -> None:
+def swap(interpreter) -> None:
     """( a b -- b a )"""
     stack = interpreter.datastack
     stack[-1], stack[-2] = stack[-2], stack[-1]
 
 
-def print_line(interpreter: Interpreter) -> None:
+def print_line(interpreter) -> None:
     """( any -- )"""
     value = interpreter.datastack.pop()
     print(print_object(value))
 
 
-def show_stack(interpreter: Interpreter) -> None:
+def show_stack(interpreter) -> None:
     """( -- )"""
     interpreter.datastack.push(interpreter.datastack)
     print('---- data stack:')

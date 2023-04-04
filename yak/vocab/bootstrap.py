@@ -1,6 +1,5 @@
 import pkg_resources
 
-from yak.interpreter import Interpreter
 from yak.primitives.quotation import Quotation
 from yak.primitives.vocabulary import def_vocabulary
 from yak.primitives.word import def_compound, def_primitive
@@ -13,12 +12,12 @@ __VOCAB__ = 'bootstrap'
 __SCRIPT__ = 'library/bootstrap.yak'
 
 
-def bootstrap_script(interpreter: Interpreter):
+def bootstrap_script(interpreter):
     """( -- str )"""
     interpreter.datastack.push(__SCRIPT__)
 
 
-def resource_path(interpreter: Interpreter):
+def resource_path(interpreter):
     """( str -- str )"""
     pathname = interpreter.datastack.pop()
     fullpath = pkg_resources.resource_filename('yak', pathname)

@@ -37,6 +37,13 @@ class Word(YakPrimitive):
     def eval(self, vm):
         raise NotImplementedError(f'{self.name} is not implemented.')
 
+    def __str__(self) -> str:
+        return self.name
+
+    def print_object(self) -> str:
+        return self.name
+
+
 @dataclass
 class PrimitiveWord(Word):
     defn: Callable|None = None

@@ -1,25 +1,37 @@
-import traceback
-
+from __future__ import annotations
 from dataclasses import dataclass
+from traceback import print_exc
 
+from yak.codebase import Codebase
 from yak.primitives import Value, YakError, YakUndefinedError, print_object
 from yak.primitives import Value
 from yak.primitives.quotation import Quotation
 from yak.primitives.namespace import Namespace
 from yak.primitives.stack import Stack
-from yak.primitives.vocabulary import def_vocabulary
+from yak.primitives.vocabulary import Vocabulary, def_vocabulary
 from yak.primitives.word import Word, WordRef
 from yak.util import get_logger
+from yak.vocab.bootstrap import BOOTSTRAP
+from yak.vocab.combinators import COMBINATORS
+from yak.vocab.io import IO
+from yak.vocab.kernel import KERNEL
+from yak.vocab.parse import PARSE
+from yak.vocab.syntax import SYNTAX
+from yak.vocab.words import WORDS
 
 LOG = get_logger()
+
+BUILTINS = [BOOTSTRAP, COMBINATORS, IO, KERNEL, PARSE, SYNTAX, WORDS]
 
 
 @dataclass
 class Interpreter:
-    vm: ...
     active: bool = False
+    current_vocab: str|None = None
+    codebase: Codebase|None = None
+
     callframe: Quotation|None = None
-    current_vocab: str = '*scratch*'
+    loaded_vocabs: Stack|None = None
 
     datastack: Stack|None = None
     callstack: Stack|None = None
@@ -29,6 +41,8 @@ class Interpreter:
     GLOBAL: Namespace|None = None
 
     def __post_init__(self):
+        self.codebase = (self.codebase or Codebase())
+        self.loaded_vocabs = (self.loaded_vocabs or Stack())
         self.datastack = (self.datastack or Stack())
         self.callstack = (self.callstack or Stack())
         self.errorstack = (self.errorstack or Stack())
@@ -36,16 +50,36 @@ class Interpreter:
         self.namestack = (self.namestack or Stack())
         self.GLOBAL = (self.GLOBAL or Namespace('global'))
 
-    def init(self, word: Word) -> None:
-        LOG.info(f'initializing interpreter with word: {word.name}')
+    def init(self) -> Interpreter:
         self.namestack.push(self.GLOBAL)
+        self.init_codebase()
+        return self
+
+    def init_codebase(self):
+        LOG.info('initializing builtins...')
+        for vocab in BUILTINS:
+            self.load_vocab(vocab)
+
+    def load_vocab(self, vocab: Vocabulary):
+        self.codebase.put_vocab(vocab)
+        self.use(vocab.name)
+
+    def use(self, vocab: str):
+        self.loaded_vocabs.push(vocab)
+
+    def start(self, word: Word|None = None) -> None:
+        LOG.info(f'initializing interpreter with word: {word}')
         self.datastack.push(self.get_init_defn(word))
         self.call()
         self.run()
 
-    def get_init_defn(self, word: Word) -> Quotation:
+    def get_init_defn(self, word: Word|None) -> Quotation:
+        if word is None:
+            word = self.fetch_word('bootstrap')
+
         if word.primitive:
             return Quotation([word.ref])
+
         return word.defn
 
     def global_namespace(self) -> Namespace:
@@ -68,9 +102,9 @@ class Interpreter:
 
     def set_current_vocabulary(self, vocab_name: str):
         LOG.info(f'switching to vocab: {vocab_name}')
-        if not self.vm.vocab_defined(vocab_name):
+        if not self.codebase.has_vocab(vocab_name):
             LOG.info(f'vocabulary not defined: {vocab_name}')
-            self.vm.new_vocab(vocab_name)
+            self.codebase.new_vocab(vocab_name)
 
         self.current_vocab = vocab_name
 
@@ -142,7 +176,7 @@ class Interpreter:
 
     def handle_error(self, err: Exception) -> bool:
         if not self.active:
-            traceback.print_exc()
+            print_exc()
             self.reset()
             return True
 
@@ -153,23 +187,28 @@ class Interpreter:
             return False
         except Exception as e:
             print(f'There was an error executing `throw`, error={e}')
-            traceback.print_exc()
+            print_exc()
             self.reset()
             return True
 
     def fetch_word(self, name: str, vocab: str|None = None) -> Word:
         if vocab is not None:
-            if (word := self.vm.fetch_word(name, vocab)) is None:
+            if (word := self.codebase.get_word(name, vocab)) is None:
                 raise YakUndefinedError(f'word={name} is not defined in vocabulary={vocab}.')
             return word
 
-        # TODO account for vocabulary loading order resolution.
-        if (word := self.vm.fetch_word(name)) is None:
-            raise YakUndefinedError(f'word={name} is not defined.')
-        return word
+        if self.current_vocab is not None:
+            if (word := self.codebase.get_word(name, self.current_vocab)) is not None:
+                return word
+
+        for vocab_name in self.loaded_vocabs.from_the_top():
+            if (word := self.codebase.get_word(name, vocab_name)) is not None:
+                return word
+
+        raise YakUndefinedError(f'word={name} is not defined.')
 
     def store_word(self, word: Word):
-        self.vm.store_word(word)
+        self.codebase.put_word(word)
 
     def reset(self) -> None:
         self.callstack.clear()

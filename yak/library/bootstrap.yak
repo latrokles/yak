@@ -1,4 +1,4 @@
-IN: dummy
+IN: bootstrap
 "this is a string"
 4.5
 1_000
@@ -11,3 +11,5 @@ show-stack
 : print-twice print-line print-line ;
 print-twice
 show-stack
+
+IN: *scratch*
