@@ -12,10 +12,10 @@ from yak.primitives.vocabulary import Vocabulary, def_vocabulary
 from yak.primitives.word import Word, WordRef
 from yak.util import get_logger
 from yak.vocab.bootstrap import BOOTSTRAP
-from yak.vocab.combinators import COMBINATORS
 from yak.vocab.ffi import FFI
 from yak.vocab.io import IO
 from yak.vocab.kernel import KERNEL
+from yak.vocab.namespaces import NS
 from yak.vocab.parse import PARSE
 from yak.vocab.quotations import QUOTATIONS
 from yak.vocab.syntax import SYNTAX
@@ -23,7 +23,17 @@ from yak.vocab.words import WORDS
 
 LOG = get_logger()
 
-BUILTINS = [BOOTSTRAP, COMBINATORS, FFI, IO, KERNEL, PARSE, QUOTATIONS, SYNTAX, WORDS]
+BUILTINS = [
+    BOOTSTRAP,
+    FFI,
+    IO,
+    KERNEL,
+    NS,
+    PARSE,
+    QUOTATIONS,
+    SYNTAX,
+    WORDS,
+]
 
 
 @dataclass
