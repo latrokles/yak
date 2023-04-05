@@ -61,11 +61,27 @@ def ENDDEF(interpreter):
     parser.pop_exclusive_state(';')
 
 
+def L_BRACKET(interpreter):
+    """( -- * )"""
+    interpreter.get_global('*parser*').push_state(']')
+    interpreter.datastack.push(Quotation())
+
+
+def R_BRACKET(interpreter):
+    """( quot -- * )"""
+    quote = interpreter.datastack.pop()
+    parser = interpreter.get_global('*parser*')
+    parser.current_accumulator.append(quote)
+    parser.pop_state(']')
+
+
 SYNTAX = (def_vocabulary('syntax')
           .store(def_primitive(__VOCAB__, 't', true))
           .store(def_primitive(__VOCAB__, 'f', false))
           .store(def_primitive(__VOCAB__, 'nil', nil))
           .store(def_primitive(__VOCAB__, 'IN:', IN, parse=True))
           .store(def_primitive(__VOCAB__, 'USE:', USE, parse=True))
+          .store(def_primitive(__VOCAB__, '[', L_BRACKET, parse=True))
+          .store(def_primitive(__VOCAB__, ']', R_BRACKET, parse=True))
           .store(def_primitive(__VOCAB__, ':', DEFINE, parse=True))
           .store(def_primitive(__VOCAB__, ';', ENDDEF, parse=True)))

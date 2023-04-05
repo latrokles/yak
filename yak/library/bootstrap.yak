@@ -15,4 +15,9 @@ show-stack
 print-twice
 show-stack
 
+[ 1 2 3 4 5 6 ]
+print-line
+" " print-line
+show-stack
+
 IN: *scratch*
