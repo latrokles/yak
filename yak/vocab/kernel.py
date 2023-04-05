@@ -21,8 +21,47 @@ def restore(interpreter):
     interpreter.datastack.push(interpreter.retainstack.pop())
 
 
+def drop(interpreter):
+    """( x -- )"""
+    interpreter.datastack.pop()
+
+
+def dup(interpreter):
+    """( x -- x x )"""
+    interpreter.datastack.push(interpreter.datastack.peek())
+
+
+def dupd(interpreter):
+    """( x y -- x x y )"""
+    interpreter.datastack.check_available(2)
+    interpreter.datastack.push(interpreter.datastack[-2])
+    swap(interpreter)
+
+
+def equal(interpreter):
+    """( obj1 obj2 -- ? )"""
+    interpreter.datastack.check_available(2)
+    first = interpreter.datastack.pop()
+    second = interpreter.datastack.pop()
+    interpreter.datastack.push(first is second)
+
+
+def nip(interpreter):
+    """( x y -- y )"""
+    interpreter.datastack.check_available(2)
+    swap(interpreter)
+    drop(interpreter)
+
+
+def over(interpreter):
+    """( x y -- x y x )"""
+    interpreter.datastack.check_available(2)
+    interpreter.datastack.push(interpreter.datastack[-2])
+
+
 def swap(interpreter) -> None:
-    """( a b -- b a )"""
+    """( x y -- y x )"""
+    interpreter.datastack.check_available(2)
     stack = interpreter.datastack
     stack[-1], stack[-2] = stack[-2], stack[-1]
 
