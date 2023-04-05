@@ -65,6 +65,7 @@ class Interpreter:
     def init(self) -> Interpreter:
         self.namestack.push(self.GLOBAL)
         self.init_codebase()
+        self.set_global('*interpreter*', self)
         return self
 
     def init_codebase(self):
