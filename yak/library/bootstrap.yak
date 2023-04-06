@@ -1,8 +1,5 @@
 IN: bootstrap
 
-"library/ffi.yak"    resource-path run-file
-"library/kernel.yak" resource-path run-file
-
 "this is a string"
 4.5
 1_000
@@ -13,3 +10,7 @@ nil
 3
 [ 1 2 3 4 5 6 ]
 IN: *scratch*
+
+"library/ffi.yak"    resource-path run-file
+"library/io.yak"     resource-path run-file
+"library/kernel.yak" resource-path run-file

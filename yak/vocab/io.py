@@ -2,9 +2,6 @@ from yak.primitives.vocabulary import def_vocabulary
 from yak.primitives.word import def_primitive
 
 
-__VOCAB__ = 'io'
-
-
 def get_file_contents(interpreter):
     """( str -- str )"""
     pathname = interpreter.datastack.pop()
@@ -20,6 +17,11 @@ def set_file_contents(interpreter):
         f.write(contents)
 
 
-IO = (def_vocabulary(__VOCAB__)
-      .store(def_primitive(__VOCAB__, 'file-contents', get_file_contents))
-      .store(def_primitive(__VOCAB__, 'file-contents=', set_file_contents)))
+def println(interpreter):
+    """( str -- )"""
+    print(interpreter.datastack.pop())
+
+
+def readln(interpreter):
+    """( -- str )"""
+    interpreter.datastack.push(input())

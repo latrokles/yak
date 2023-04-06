@@ -12,7 +12,6 @@ from yak.primitives.vocabulary import Vocabulary, def_vocabulary
 from yak.primitives.word import Word, WordRef
 from yak.util import get_logger
 from yak.vocab.bootstrap import BOOTSTRAP
-from yak.vocab.io import IO
 from yak.vocab.namespaces import NS
 from yak.vocab.parse import PARSE
 from yak.vocab.quotations import QUOTATIONS
@@ -23,7 +22,6 @@ LOG = get_logger()
 
 BUILTINS = [
     BOOTSTRAP,
-    IO,
     NS,
     PARSE,
     QUOTATIONS,
@@ -213,6 +211,7 @@ class Interpreter:
                 return word
 
         for vocab_name in self.loaded_vocabs.from_the_top():
+            LOG.info(f'searching for `{name}` in `{vocab_name}`')
             if (word := self.codebase.get_word(name, vocab_name)) is not None:
                 return word
 
