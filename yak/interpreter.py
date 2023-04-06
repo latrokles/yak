@@ -13,7 +13,6 @@ from yak.primitives.word import Word, WordRef
 from yak.util import get_logger
 from yak.vocab.bootstrap import BOOTSTRAP
 from yak.vocab.io import IO
-from yak.vocab.kernel import KERNEL
 from yak.vocab.namespaces import NS
 from yak.vocab.parse import PARSE
 from yak.vocab.quotations import QUOTATIONS
@@ -25,7 +24,6 @@ LOG = get_logger()
 BUILTINS = [
     BOOTSTRAP,
     IO,
-    KERNEL,
     NS,
     PARSE,
     QUOTATIONS,
@@ -118,6 +116,8 @@ class Interpreter:
             self.codebase.new_vocab(vocab_name)
 
         self.current_vocab = vocab_name
+        if vocab_name not in self.loaded_vocabs:
+            self.loaded_vocabs.push(vocab_name)
 
     def call(self) -> None:
         """

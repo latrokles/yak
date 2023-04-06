@@ -59,7 +59,6 @@ def DEFINE(interpreter):
 
 def ENDDEF(interpreter):
     """( word definer -- )"""
-    print(f'{interpreter.datastack}')
     parser = interpreter.get_global('*parser*')
     swap(interpreter)
     definer = interpreter.datastack.pop()

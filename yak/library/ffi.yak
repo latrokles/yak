@@ -1,0 +1,13 @@
+IN: ffi
+
+PRIMITIVE: make-args vocab.ffi.make_args ( ... x -- quot ) ;
+PRIMITIVE: ffi-obj vocab.ffi.load_object ( str str -- obj ) ;
+PRIMITIVE: attr> vocab.ffi.get_attribute ( obj str -- obj ) ;
+PRIMITIVE: >attr vocab.ffi.set_attribute ( obj str obj -- obj ) ;
+PRIMITIVE: invoke vocab.ffi.invoke ( callable quot -- obj ) ;
+PRIMITIVE: invoke-drop-result vocab.ffi.invoke ( callable quot -- ) ;
+
+: narg  ( -- quot ) [ ] ;
+: 1arg  ( x y -- quot ) 1 make-args ;
+: 2args ( x y -- quot ) 2 make-args ;
+: 3args ( x y z -- quot ) 3 make-args ;

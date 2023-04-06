@@ -27,6 +27,15 @@ def get_attribute(interpreter):
     interpreter.datastack.push(value)
 
 
+def set_attribute(interpreter):
+    """( obj str value -- obj )"""
+    interpreter.datastack.check_available(3)
+    value = interpreter.datastack.pop()
+    name = interpreter.datastack.pop()
+    obj = interpreter.datastack.peek()
+    setattr(obj, name, value)
+
+
 def make_args(interpreter):
     """( ... x -- quot )"""
     make_quotation(interpreter)

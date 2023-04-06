@@ -29,5 +29,6 @@ def bootstrap(interpreter):
 
 BOOTSTRAP = (
     def_vocabulary(__VOCAB__)
+    .store(def_primitive(__VOCAB__, 'resource-path', resource_path))
     .store(def_primitive(__VOCAB__, 'bootstrap', bootstrap))
 )

@@ -1,5 +1,7 @@
 IN: bootstrap
-USE: syntax
+
+"library/ffi.yak"    resource-path run-file
+"library/kernel.yak" resource-path run-file
 
 "this is a string"
 4.5
@@ -9,18 +11,5 @@ t
 f
 nil
 3
-show-stack
-
-: print-twice ( str str -- ) print-line print-line ;
-print-twice
-show-stack
-
 [ 1 2 3 4 5 6 ]
-print-line
-" " print-line
-show-stack
-
-IN: kernel
-PRIMITIVE: swap vocab.kernel.swap ;
-
 IN: *scratch*

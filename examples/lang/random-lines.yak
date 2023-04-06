@@ -1,5 +1,8 @@
 IN: random-lines
-USING: draw draw.palette geometry ui ;
+
+IMPORT-FROM: draw *window* width>> height>> >>background draw-line ;
+IMPORT-FROM: geometry make-point ;
+IMPORT-FROM: palette random-color ;
 
 : random-x ( -- int ) 20 +window+ width>>  20 - random-int ;
 : random-y ( -- int ) 20 +window+ height>> 20 - random-int ;

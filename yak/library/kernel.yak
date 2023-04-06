@@ -1,0 +1,56 @@
+IN: kernel
+
+
+PRIMITIVE: >r vocab.kernel.retain ( obj -- ) ;
+PRIMITIVE: r> vocab.kernel.restore ( -- obj ) ;
+
+PRIMITIVE: set-datastack vocab.kernel.set_datastack ( quot -- ) ;
+PRIMITIVE: set-retainstack vocab.kernel.set_retainstack ( quot -- ) ;
+PRIMITIVE: set-errorstack vocab.kernel.set_errorstack ( quot -- ) ;
+
+PRIMITIVE: call vocab.kernel.call ( quot -- ) ;
+PRIMITIVE: drop vocab.kernel.drop ( x -- ) ;
+PRIMITIVE: dup vocab.kernel.dup ( x -- x x ) ;
+PRIMITIVE: dupd vocab.kernel.dupd ( x y -- x x y ) ;
+PRIMITIVE: equal? vocab.kernel.equal ( obj1 obj2 -- ? ) ;
+PRIMITIVE: nip vocab.kernel.nip ( x y -- y ) ;
+PRIMITIVE: over vocab.kernel.over ( x y -- x y x ) ;
+PRIMITIVE: pick vocab.kernel.pick ( x y z -- x y z x ) ;
+PRIMITIVE: rot-l vocab.kernel.rotl ( x y z -- y z x ) ;
+PRIMITIVE: rot-r vocab.kernel.rotl ( x y z -- z x y ) ;
+PRIMITIVE: swap vocab.kernel.swap ( x y -- y x ) ;
+PRIMITIVE: swapd vocab.kernel.swapd ( x y z -- y x z ) ;
+
+PRIMITIVE: if-else vocab.kernel.if_else ( ? quot quot -- ... ) ;
+
+: clear-datastack   ( -- ) [ ] set-datastack ;
+: clear-retainstack ( -- ) [ ] set-retainstack ;
+: clear-errorstack  ( -- ) [ ] set-errorstack ;
+: clear ( -- ) clear-datastack clear-retainstack clear-errorstack ;
+
+: 2drop ( x y -- ) drop drop ;
+: 3drop ( x y z -- ) 2drop drop ;
+: 4drop ( w x y z -- ) 2drop 2drop ;
+
+: 2dup ( x y -- x y x y ) over over ;
+: 3dup ( x y z -- x y z x y z ) pick pick pick ;
+
+: 2nip ( x y z -- z ) nip nip ;
+
+: dip  ( x quot -- x ) swap >r call r> ;
+: 2dip ( x y quot -- x y ) swap >r swap >r call r> r> ;
+: 3dip ( x y z quot -- x y z ) swap >r swap >r swap >r call r> r> r> ;
+
+: keep ( x quot -- res x ) over [ call ] dip ;
+: 2keep ( x y quot -- res x y ) [ 2dup ] dip 2dip ;
+: 3keep ( x y z quot -- res x y x ) [ 3dup ] dip 3dip ;
+
+: tuck ( x y -- y x y ) dup rot-r ;
+: pick ( x y z -- x y z x ) rot-l dup ( rot-r ) dip ;
+: 2over ( x y z -- x y z x y ) pick pick ;
+
+: compose ( quot1 quot2 -- quot ) 2args "operator" "add" ffi-obj swap invoke ;
+: prepose ( quot1 quot2 -- quot ) swap compose ;
+
+: when   ( ? quot -- ... ) swap [ call ] [ drop ] if-else ;
+: unless ( ? quot -- ... ) swap [ drop ] [ call ] if-else ;

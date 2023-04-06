@@ -6,11 +6,6 @@ from yak.primitives.word import def_primitive
 __VOCAB__ = 'kernel'
 
 
-def call(interpreter) -> None:
-    """( quot --  )"""
-    interpreter.call()
-
-
 def retain(interpreter):
     """( obj -- | -- obj )"""
     interpreter.retainstack.push(interpreter.datastack.pop())
@@ -19,6 +14,26 @@ def retain(interpreter):
 def restore(interpreter):
     """( -- obj | obj -- )"""
     interpreter.datastack.push(interpreter.retainstack.pop())
+
+
+def set_datastack(interpreter):
+    """( quot -- )"""
+    interpreter.datastack = interpreter.datastack.pop()
+
+
+def set_retainstack(interpreter):
+    """( quot -- )"""
+    interpreter.retainstack = interpreter.datastack.pop()
+
+
+def set_errorstack(interpreter):
+    """( quot -- )"""
+    interpreter.errorstack = interpreter.datastack.pop()
+
+
+def call(interpreter):
+    """( quot --  )"""
+    interpreter.call()
 
 
 def drop(interpreter):
@@ -59,30 +74,59 @@ def over(interpreter):
     interpreter.datastack.push(interpreter.datastack[-2])
 
 
-def swap(interpreter) -> None:
+def pick(interpreter):
+    """( x y z -- x y z x )"""
+    interpreter.datastack.push(interpreter.datastack[-3])
+
+
+def rotl(interpreter):
+    """( x y z -- y z x )"""
+    stack = interpreter.datastack
+    stack[-1], stack[-2], stack[-3] = stack[-3], stack[-1], stack[-2]
+
+
+def rotr(interpreter):
+    """( x y z -- y z x )"""
+    stack = interpreter.datastack
+    stack[-1], stack[-2], stack[-3] = stack[-2], stack[-3], stack[-1]
+
+
+def swap(interpreter):
     """( x y -- y x )"""
     interpreter.datastack.check_available(2)
     stack = interpreter.datastack
     stack[-1], stack[-2] = stack[-2], stack[-1]
 
 
-def print_line(interpreter) -> None:
+def swapd(interpreter):
+    """( x y z -- y x z )"""
+    stack[-2], stack[-3] = stack[-3], stack[-2]
+
+
+def print_line(interpreter):
     """( any -- )"""
     value = interpreter.datastack.pop()
     print(print_object(value))
 
 
-def show_stack(interpreter) -> None:
+def show_stack(interpreter):
     """( -- )"""
     interpreter.datastack.push(interpreter.datastack)
     print('---- data stack:')
     print_line(interpreter)
 
 
-KERNEL = (def_vocabulary(__VOCAB__)
-          .store(def_primitive(__VOCAB__, 'call', call))
-          .store(def_primitive(__VOCAB__, '>r', retain))
-          .store(def_primitive(__VOCAB__, 'r>', restore))
-          .store(def_primitive(__VOCAB__, 'print-line', print_line))
-          .store(def_primitive(__VOCAB__, 'show-stack', show_stack))
-          .store(def_primitive(__VOCAB__, 'swap', swap)))
+def if_else(interpreter):
+    """( ? t-quot f-quot -- ... )"""
+    interpreter.datastack.check_available(3)
+    if_false = interpreter.datastack.pop()
+    if_true = interpreter.datastack.pop()
+    condition = interpreter.datastack.pop()
+
+    # TODO rewrite this using stack shufflers
+    if condition is True:
+        interpreter.datastack.push(if_true)
+        call(interpreter)
+        return
+    interpreter.datastack.push(if_false)
+    call(interpreter)
