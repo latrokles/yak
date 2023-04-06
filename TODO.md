@@ -22,13 +22,6 @@
 
 ## feature
 
-- PRIMITIVE: parse word.
-  - would allow `PRIMITIVE: kernel.dup ( x -- x x )` to do all the `def_primitive` under the hood.
-  - this way the only two vocabs that have to be built in python code are:
-    - bootstrap
-	- syntax
-  - the rest of the vocabularies can be defined in `yak/lang` as pure `.yak` files.
-
 - control flow
   - will have to define `if-else` in python like I did with `rtkm` and `ruin`.
   - will need either recursion and/or stack combinators (`keep`, `dip`, etc.) to be able to implement looping.

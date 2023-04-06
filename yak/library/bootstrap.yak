@@ -11,7 +11,7 @@ nil
 3
 show-stack
 
-: print-twice print-line print-line ;
+: print-twice ( str str -- ) print-line print-line ;
 print-twice
 show-stack
 
@@ -19,5 +19,8 @@ show-stack
 print-line
 " " print-line
 show-stack
+
+IN: kernel
+PRIMITIVE: swap vocab.kernel.swap ;
 
 IN: *scratch*

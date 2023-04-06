@@ -1,11 +1,12 @@
 import importlib
 
+from yak.primitives.ffi import load_module
 from yak.primitives.vocabulary import def_vocabulary
 from yak.primitives.word import def_primitive
 from yak.vocab.quotations import make_quotation
 
 
-def import_object(interpreter):
+def load_object(interpreter):
     """( str str -- obj )"""
     interpreter.datastack.check_available(2)
     name = interpreter.datastack.pop()
@@ -49,13 +50,3 @@ def invoke_and_discard_result(interpreter):
     """( fn quot -- )"""
     invoke(interpreter)
     interpreter.datastack.pop()
-
-
-__VOCAB__ = 'ffi'
-FFI = (def_vocabulary(__VOCAB__)
-       .store(def_primitive(__VOCAB__, 'import', import_object))
-       .store(def_primitive(__VOCAB__, 'attr>', get_attribute))
-       .store(def_primitive(__VOCAB__, 'make-args', make_args))
-       .store(def_primitive(__VOCAB__, 'make-kwargs', make_kwargs))
-       .store(def_primitive(__VOCAB__, 'invoke', invoke))
-       .store(def_primitive(__VOCAB__, 'invoke-no-result', invoke)))
