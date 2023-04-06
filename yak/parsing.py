@@ -156,12 +156,10 @@ class Parser:
 
     @contextmanager
     def raw(self) -> Parser:
-        LOG.info('entering raw mode')
         prev_mode = self.mode
         self.mode = ParseMode.RAW
         yield self
         self.mode = prev_mode
-        LOG.info('leaving raw mode')
 
     def push_state(self, delimiter: str|None = None) -> None:
         if delimiter is not None:
@@ -233,4 +231,4 @@ class Parser:
                 word.eval(self.interpreter)
             return word.ref
         except Exception as e:
-            raise ParseError(f'Unable to parse word: {e}')
+            raise ParseError(f'Unable to parse word `{token.text}`: {e}')
