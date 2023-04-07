@@ -23,5 +23,6 @@ def println(interpreter):
 
 
 def readln(interpreter):
-    """( -- str )"""
-    interpreter.datastack.push(input())
+    """( str -- str )"""
+    prompt = interpreter.datastack.pop()
+    interpreter.datastack.push(input(prompt))

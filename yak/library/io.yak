@@ -5,18 +5,3 @@ PRIMITIVE: file-contents= vocab.io.set_file_contents ( str str -- ) ;
 
 PRIMITIVE: print vocab.io.println ( str -- ) ;
 PRIMITIVE: read vocab.io.readln ( -- str ) ;
-
-( TODO remove the stuff below )
-print
-print
-print
-print
-print
-print
-print
-print
-print
-"type some input"
-print
-read
-print

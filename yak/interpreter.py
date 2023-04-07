@@ -147,6 +147,7 @@ class Interpreter:
         self.active = True
         while self.active:
             try:
+                LOG.info(f'datastack: {print_object(Quotation(self.datastack))}')
                 LOG.info(f'callframe: {print_object(self.callframe)}')
                 if self.callframe is None or self.callframe.empty:
                     if self.callstack.empty():
