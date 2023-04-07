@@ -1,0 +1,11 @@
+IN: namespaces
+
+( TODO implement in terms of manipulations of the namestack )
+
+PRIMITIVE: global vocab.namespaces.global_namespace ( -- global ) ;
+PRIMITIVE: get-global vocab.namespaces.get_global ( variable -- value ) ;
+PRIMITIVE: set-global vocab.namespaces.set_global ( variable value -- ) ;
+
+PRIMITIVE: namespace vocab.namespaces.namespace ( -- namespace ) ;
+PRIMITIVE: get-var vocab.namespaces.getvar ( variable -- value ) ;
+PRIMITIVE: set-var vocab.namespaces.setvar ( variable value -- ) ;

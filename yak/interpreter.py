@@ -12,7 +12,6 @@ from yak.primitives.vocabulary import Vocabulary, def_vocabulary
 from yak.primitives.word import Word, WordRef
 from yak.util import get_logger
 from yak.vocab.bootstrap import BOOTSTRAP
-from yak.vocab.namespaces import NS
 from yak.vocab.parse import PARSE
 from yak.vocab.quotations import QUOTATIONS
 from yak.vocab.syntax import SYNTAX
@@ -22,7 +21,6 @@ LOG = get_logger()
 
 BUILTINS = [
     BOOTSTRAP,
-    NS,
     PARSE,
     QUOTATIONS,
     SYNTAX,
