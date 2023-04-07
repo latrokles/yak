@@ -45,7 +45,6 @@
 
 - stdlib
   - control flow combinators
-  - math
   - strings
   - io
   - prettyprint

@@ -1,0 +1,44 @@
+IN: math
+
+: <   ( x y -- ? ) 2args "operator" "lt"     ffi-obj swap invoke ;
+: <=  ( x y -- ? ) 2args "operator" "le"     ffi-obj swap invoke ;
+: >   ( x y -- ? ) 2args "operator" "gt"     ffi-obj swap invoke ;
+: >=  ( x y -- ? ) 2args "operator" "ge"     ffi-obj swap invoke ;
+: =   ( x y -- ? ) 2args "operator" "eq"     ffi-obj swap invoke ;
+: !=  ( x y -- ? ) 2args "operator" "ne"     ffi-obj swap invoke ;
+: or  ( x y -- ? ) 2args "operator" "or_"    ffi-obj swap invoke ;
+: and ( x y -- ? ) 2args "operator" "and_"   ffi-obj swap invoke ;
+: xor ( x y -- ? ) 2args "operator" "xor"    ffi-obj swap invoke ;
+: not ( x   -- ? ) 1arg  "operator" "not_"   ffi-obj swap invoke ;
+
+
+: << ( x -- y )   2args "operator" "lshift" ffi-obj swap invoke ;
+: >> ( x -- y )   2args "operator" "rshift" ffi-obj swap invoke ;
+: |  ( x y -- ? ) 2args "operator" "or_"    ffi-obj swap invoke ;
+: &  ( x y -- ? ) 2args "operator" "and_"   ffi-obj swap invoke ;
+: ^  ( x y -- ? ) 2args "operator" "xor"    ffi-obj swap invoke ;
+: ~  ( x y -- ? ) 2args "operator" "invert" ffi-obj swap invoke ;
+
+
+: >i ( x -- y ) 1arg "builtins" "int"   ffi-obj swap invoke ;
+: >f ( x -- y ) 1arg "builtins" "float" ffi-obj swap invoke ;
+
+
+: +    ( x y -- z ) 2args "operator" "add"      ffi-obj swap invoke ;
+: -    ( x y -- z ) 2args "operator" "sub"      ffi-obj swap invoke ;
+: *    ( x y -- z ) 2args "operator" "mul"      ffi-obj swap invoke ;
+: /f   ( x y -- z ) 2args "operator" "truediv"  ffi-obj swap invoke ;
+: /i   ( x y -- z ) 2args "operator" "floordiv" ffi-obj swap invoke ;
+: %    ( x y -- z ) 2args "operator" "mod"      ffi-obj swap invoke ;
+: **   ( x y -- z ) 2args "operator" "pow"      ffi-obj swap invoke ;
+: sqrt ( x -- y )   1arg  "math"     "sqrt"     ffi-obj swap invoke ;
+: abs  ( x y -- z ) 1arg  "builtins" "abs"      ffi-obj swap invoke ;
+
+: even? ( n -- ? ) 2 % 0 = ;
+: odd?  ( n -- ? ) even? not ;
+: neg?  ( n -- ? )   0 < ;
+: pos?  ( n -- ? ) neg? not ;
+
+: dec ( x -- y ) 1 - ;
+: int ( x -- y ) 1 + ;
+: neg ( x -- y ) -1 * ;
