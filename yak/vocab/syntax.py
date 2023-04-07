@@ -2,6 +2,7 @@ from yak.primitives.quotation import Quotation
 from yak.primitives.vocabulary import def_vocabulary
 from yak.primitives.word import def_primitive
 from yak.vocab.kernel import call, swap
+from yak.vocab.words import define_compound
 
 
 def true(interpreter):
@@ -43,6 +44,15 @@ def PRIMITIVE(interpreter):
         interpreter.datastack.push(interpreter.fetch_word('define-primitive'))
         interpreter.datastack.push(p.next_value())  # module
         parser.push_exclusive_state(';')
+
+
+def DEFER(interpreter):
+    """( -- )"""
+    parser = interpreter.get_global('*parser*')
+    with parser.raw() as p:
+        interpreter.datastack.push(p.next_value())
+        interpreter.datastack.push(Quotation())
+        define_compound(interpreter)
 
 
 def DEFINE(interpreter):
@@ -94,6 +104,7 @@ SYNTAX = (def_vocabulary('syntax')
           .store(def_primitive(__VOCAB__, 'nil', nil))
           .store(def_primitive(__VOCAB__, 'IN:', IN, parse=True))
           .store(def_primitive(__VOCAB__, 'USE:', USE, parse=True))
+          .store(def_primitive(__VOCAB__, 'DEFER:', DEFER, parse=True))
           .store(def_primitive(__VOCAB__, 'PRIMITIVE:', PRIMITIVE, parse=True))
           .store(def_primitive(__VOCAB__, '[', L_BRACKET, parse=True))
           .store(def_primitive(__VOCAB__, ']', R_BRACKET, parse=True))

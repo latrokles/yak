@@ -28,6 +28,8 @@ PRIMITIVE: if-else vocab.kernel.if_else ( ? quot quot -- ... ) ;
 : clear-errorstack  ( -- ) [ ] set-errorstack ;
 : clear ( -- ) clear-datastack clear-retainstack clear-errorstack ;
 
+: eval ( str -- ) parse call ;
+
 : 2drop ( x y -- ) drop drop ;
 : 3drop ( x y z -- ) 2drop drop ;
 : 4drop ( w x y z -- ) 2drop 2drop ;
@@ -54,3 +56,10 @@ PRIMITIVE: if-else vocab.kernel.if_else ( ? quot quot -- ... ) ;
 
 : when   ( ? quot -- ... ) swap [ call ] [ drop ] if-else ;
 : unless ( ? quot -- ... ) swap [ drop ] [ call ] if-else ;
+
+DEFER: while
+: while ( pred body -- ... )
+        swap [ call ] keep
+	swap [ 2drop ] unless
+	>r [ call ] keep r>
+	swap while ;
