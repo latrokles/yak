@@ -45,16 +45,21 @@
 
 - stdlib
   - control flow combinators
-    - if-then
-	- loop
   - math
   - strings
   - io
+  - prettyprint
+    - values
+    - stacks (data, call, retain, error)
   - net
   - http
   - web
   - random
   - test
+  - platform.macos
+  - os
+  - sequences
+  - generic words
 
 - graphics
   - ?

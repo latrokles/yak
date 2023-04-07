@@ -57,11 +57,9 @@ PRIMITIVE: if-else vocab.kernel.if_else ( ? quot quot -- ... ) ;
 : when   ( ? quot -- ... ) swap [ call ] [ drop ] if-else ;
 : unless ( ? quot -- ... ) swap [ drop ] [ call ] if-else ;
 
-( FIXME exit condition leaves the rest of the implementation
-        in the callstack ROFL! )
 DEFER: while
 : while ( pred body -- ... )
-        swap [ call ] keep
-	swap [ 2drop ] unless
-	>r [ call ] keep r>
-	swap while ;
+        swap [ call ] keep swap
+	[ >r [ call ] keep r> swap while ]
+	[ 2drop ]
+	if-else ;
