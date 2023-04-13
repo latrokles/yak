@@ -6,8 +6,10 @@ from pathlib import Path
 
 YAKDIR = Path.home() / Path('.yak')
 LOGFORMAT = '%(asctime)s - %(levelname)-8s - [%(filename)s:%(lineno)d] - %(message)s'
-LOGLEVEL = getattr(logging, os.getenv('LOGLEVEL', 'DEBUG'))
 LOGFILE = YAKDIR / 'yak.log'
+
+HOME = os.getenv('HOME')
+HISTORY = YAKDIR / 'yak.history'
 
 
 def set_up_yakdir():
@@ -17,6 +19,7 @@ def set_up_yakdir():
     YAKDIR.mkdir()
 
 
-def get_logger():
-    logging.basicConfig(filename=LOGFILE, level=LOGLEVEL, format=LOGFORMAT)
+def get_logger(level: str):
+    loglevel = getattr(logging, level)
+    logging.basicConfig(filename=LOGFILE, level=loglevel, format=LOGFORMAT)
     return logging.getLogger()

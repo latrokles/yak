@@ -1,23 +1,21 @@
 from __future__ import annotations
 from dataclasses import dataclass
+from logging import Logger
 from traceback import print_exc
 
 from yak.codebase import Codebase
-from yak.primitives import Value, YakError, YakUndefinedError, print_object
-from yak.primitives import Value
+from yak.primitives import Value, YakError, YakPrimitive, YakUndefinedError, prettyformat
 from yak.primitives.quotation import Quotation
 from yak.primitives.namespace import Namespace
 from yak.primitives.stack import Stack
 from yak.primitives.vocabulary import Vocabulary, def_vocabulary
 from yak.primitives.word import Word, WordRef
-from yak.util import get_logger
 from yak.vocab.bootstrap import BOOTSTRAP
 from yak.vocab.parse import PARSE
 from yak.vocab.quotations import QUOTATIONS
 from yak.vocab.syntax import SYNTAX
 from yak.vocab.words import WORDS
 
-LOG = get_logger()
 
 BUILTINS = [
     BOOTSTRAP,
@@ -29,7 +27,8 @@ BUILTINS = [
 
 
 @dataclass
-class Interpreter:
+class Interpreter(YakPrimitive):
+    logger: Logger
     active: bool = False
     current_vocab: str|None = None
     codebase: Codebase|None = None
@@ -45,7 +44,7 @@ class Interpreter:
     GLOBAL: Namespace|None = None
 
     def __post_init__(self):
-        self.codebase = (self.codebase or Codebase())
+        self.codebase = (self.codebase or Codebase(self.logger))
         self.loaded_vocabs = (self.loaded_vocabs or Stack())
         self.datastack = (self.datastack or Stack())
         self.callstack = (self.callstack or Stack())
@@ -58,10 +57,11 @@ class Interpreter:
         self.namestack.push(self.GLOBAL)
         self.init_codebase()
         self.set_global('*interpreter*', self)
+        self.bootstrap()
         return self
 
     def init_codebase(self):
-        LOG.info('initializing builtins...')
+        self.logger.info('initializing builtins...')
         for vocab in BUILTINS:
             self.load_vocab(vocab)
 
@@ -69,18 +69,24 @@ class Interpreter:
         self.codebase.put_vocab(vocab)
         self.use(vocab.name)
 
+    def bootstrap(self):
+        word = self.fetch_word('bootstrap')
+        self.datastack.push(Quotation([word.ref]))
+        self.call()
+        self.run()
+
     def use(self, vocab: str):
         self.loaded_vocabs.push(vocab)
 
     def start(self, word: Word|None = None) -> None:
-        LOG.info(f'initializing interpreter with word: {word}')
+        self.logger.info(f'initializing interpreter with word: {word}')
         self.datastack.push(self.get_init_defn(word))
         self.call()
         self.run()
 
     def get_init_defn(self, word: Word|None) -> Quotation:
         if word is None:
-            word = self.fetch_word('bootstrap')
+            word = self.fetch_word('start-repl')
 
         if word.primitive:
             return Quotation([word.ref])
@@ -106,9 +112,9 @@ class Interpreter:
         self.GLOBAL.set_binding(var, val)
 
     def set_current_vocabulary(self, vocab_name: str):
-        LOG.info(f'switching to vocab: {vocab_name}')
+        self.logger.info(f'switching to vocab: {vocab_name}')
         if not self.codebase.has_vocab(vocab_name):
-            LOG.info(f'vocabulary not defined: {vocab_name}')
+            self.logger.info(f'vocabulary not defined: {vocab_name}')
             self.codebase.new_vocab(vocab_name)
 
         self.current_vocab = vocab_name
@@ -147,8 +153,8 @@ class Interpreter:
         self.active = True
         while self.active:
             try:
-                LOG.info(f'datastack: {print_object(Quotation(self.datastack))}')
-                LOG.info(f'callframe: {print_object(self.callframe)}')
+                self.logger.debug(f'callframe: {prettyformat(self.callframe)}')
+                self.logger.debug(f"datastack: {prettyformat(self.datastack)}")
                 if self.callframe is None or self.callframe.empty:
                     if self.callstack.empty():
                         break
@@ -161,7 +167,7 @@ class Interpreter:
                 self.callframe = self.callframe.tail
                 self.eval(to_evaluate)
             except Exception as e:
-                LOG.error(f'Something went wrong: {e}')
+                self.logger.error(f'Something went wrong: {e}')
                 if self.handle_error(e):
                     return
 
@@ -210,7 +216,7 @@ class Interpreter:
                 return word
 
         for vocab_name in self.loaded_vocabs.from_the_top():
-            LOG.info(f'searching for `{name}` in `{vocab_name}`')
+            self.logger.debug(f'searching for `{name}` in `{vocab_name}`')
             if (word := self.codebase.get_word(name, vocab_name)) is not None:
                 return word
 
@@ -225,3 +231,6 @@ class Interpreter:
         self.errorstack.clear()
         self.retainstack.clear()
         self.callframe = None
+
+    def prettyformat(self) -> str:
+        return "*INTERPRETER*"

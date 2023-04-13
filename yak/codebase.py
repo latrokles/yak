@@ -1,26 +1,26 @@
 from __future__ import annotations
 from dataclasses import dataclass, field
+from logging import Logger
 
 from yak.primitives import YakUndefinedError
 from yak.primitives.vocabulary import Vocabulary, def_vocabulary
-from yak.util import get_logger
 
-LOG = get_logger()
 
 
 @dataclass
 class Codebase:
+    logger: logging.Logger
     vocabularies: dict[str, Vocabulary] = field(default_factory=dict)
 
     def new_vocab(self, vocab_name: str):
-        LOG.info(f'defining new vocabulary: {vocab_name}')
+        self.logger.info(f'defining new vocabulary: {vocab_name}')
         self.put_vocab(def_vocabulary(vocab_name))
 
     def has_vocab(self, vocab_name: str) -> bool:
         return vocab_name in self.vocabularies.keys()
 
     def put_vocab(self, vocab: Vocabulary) -> Codebase:
-        LOG.info(f'loading vocabulary: {vocab.name}')
+        self.logger.info(f'loading vocabulary: {vocab.name}')
         self.vocabularies[vocab.name] = vocab
         return self
 

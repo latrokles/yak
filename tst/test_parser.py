@@ -4,11 +4,12 @@ from yak.interpreter import Interpreter
 from yak.parsing import Parser, ParseError, Scanner
 from yak.primitives.word import WordRef
 from yak.primitives.quotation import Quotation
+from yak.util import get_logger
 
 
 @pytest.fixture
 def parser(src) -> Parser:
-    return Parser(Interpreter().init(), Scanner(src))
+    return Parser(Interpreter(get_logger('INFO')).init(), Scanner(src))
 
 
 @pytest.mark.parametrize('src', ['"this is a string"'])
