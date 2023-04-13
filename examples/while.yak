@@ -1,0 +1,10 @@
+IN: examples.while
+
+#| 
+while is a word with stack effect ( pred quot -- ... ), where
+`pred` is a predicate word (it pushes t/f onto the stack) and `quot` 
+a quotation to call.
+|#
+
+: main ( -- )
+       1000 [ dup 0 > ] [ dup print 1 - ] while drop ;

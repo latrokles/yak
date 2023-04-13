@@ -7,5 +7,4 @@ IN: repl
 : repl-loop ( -- ) [ continue-repl? ] [ repl-read eval datastack. ] while ;
 : start-repl ( -- ) activate-repl repl-loop ;
 : quit-repl ( -- ) "bye!" print "*repl-active*" f set-global ;
-
-IN: *scratch*
+: main ( -- ) start-repl ;

@@ -11,7 +11,7 @@ from yak.primitives.stack import Stack
 from yak.primitives.vocabulary import Vocabulary, def_vocabulary
 from yak.primitives.word import Word, WordRef
 from yak.vocab.bootstrap import BOOTSTRAP
-from yak.vocab.parse import PARSE
+from yak.vocab.parse import PARSE, run_file
 from yak.vocab.quotations import QUOTATIONS
 from yak.vocab.syntax import SYNTAX
 from yak.vocab.words import WORDS
@@ -53,11 +53,11 @@ class Interpreter(YakPrimitive):
         self.namestack = (self.namestack or Stack())
         self.GLOBAL = (self.GLOBAL or Namespace('global'))
 
-    def init(self) -> Interpreter:
+    def init(self, imagepath: str|None = None) -> Interpreter:
         self.namestack.push(self.GLOBAL)
         self.init_codebase()
         self.set_global('*interpreter*', self)
-        self.bootstrap()
+        self.bootstrap(imagepath)
         return self
 
     def init_codebase(self):
@@ -69,7 +69,9 @@ class Interpreter(YakPrimitive):
         self.codebase.put_vocab(vocab)
         self.use(vocab.name)
 
-    def bootstrap(self):
+    def bootstrap(self, imagepath: str|None):
+        if imagepath is not None:
+            raise YakError('images are not implemented yet!')
         word = self.fetch_word('bootstrap')
         self.datastack.push(Quotation([word.ref]))
         self.call()
@@ -78,20 +80,31 @@ class Interpreter(YakPrimitive):
     def use(self, vocab: str):
         self.loaded_vocabs.push(vocab)
 
-    def start(self, word: Word|None = None) -> None:
-        self.logger.info(f'initializing interpreter with word: {word}')
-        self.datastack.push(self.get_init_defn(word))
+    def start(self, scriptpath: str|None = None):
+        self.logger.info('starting interpreter')
+        self.datastack.push(self.get_init_defn(scriptpath))
         self.call()
         self.run()
 
-    def get_init_defn(self, word: Word|None) -> Quotation:
-        if word is None:
-            word = self.fetch_word('start-repl')
+    def get_init_defn(self, scriptpath: str|None) -> Quotation:
+        if scriptpath is not None:
+            self.logger.info(f'running script: {scriptpath}')
+            self.parse_script(scriptpath)
+        else:
+            self.logger.info('starting repl')
+            self.set_current_vocabulary('repl')
+
+        word = self.fetch_word('main')
+        print(f'WORD: {word.name}, VOCAB: {word.vocabulary}')
+        self.set_current_vocabulary('*scratch*')
 
         if word.primitive:
             return Quotation([word.ref])
-
         return word.defn
+
+    def parse_script(self, pathname: str):
+        self.datastack.push(pathname)
+        run_file(self)
 
     def global_namespace(self) -> Namespace:
         return self.GLOBAL
@@ -216,7 +229,6 @@ class Interpreter(YakPrimitive):
                 return word
 
         for vocab_name in self.loaded_vocabs.from_the_top():
-            self.logger.debug(f'searching for `{name}` in `{vocab_name}`')
             if (word := self.codebase.get_word(name, vocab_name)) is not None:
                 return word
 

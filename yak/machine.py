@@ -35,15 +35,14 @@ class YakMachine:
             self.logger.info(f'starting yak: {self}')
             self.read_history()
             self.running = True
-            exit_code = self.run()
+            self.run()
             self.logger.info('stopping yak')
-            sys.exit(exit_code)
+            sys.exit(0)
         finally:
             self.write_history()
 
-    def run(self) -> int:
-        Interpreter(self.logger).init().start()
-        return 0
+    def run(self):
+        Interpreter(self.logger).init(self.imagepath).start(self.scriptpath)
 
     def stop(self):
         self.running = False
@@ -52,7 +51,6 @@ class YakMachine:
 @dataclass
 class GraphicYakMachine(YakMachine):
     def with_image(self, pathname: str|None = None) -> YakMachine:
-        self.imagepath = (pathname or 'images/default-graphics.image')
         return self
 
     def read_history(self):
@@ -65,7 +63,6 @@ class GraphicYakMachine(YakMachine):
 @dataclass
 class ConsoleYakMachine(YakMachine):
     def with_image(self, pathname: str|None = None) -> YakMachine:
-        self.imagepath = (pathname or 'images/default-minimal.image')
         return self
 
     def read_history(self):
