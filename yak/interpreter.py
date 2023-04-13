@@ -95,7 +95,6 @@ class Interpreter(YakPrimitive):
             self.set_current_vocabulary('repl')
 
         word = self.fetch_word('main')
-        print(f'WORD: {word.name}, VOCAB: {word.vocabulary}')
         self.set_current_vocabulary('*scratch*')
 
         if word.primitive:
