@@ -1,5 +1,5 @@
 from yak.primitives import Value, YakPrimitive
-from yak.primitives import print_object
+from yak.primitives.stack import Stack
 from yak.primitives.vocabulary import def_vocabulary
 from yak.primitives.word import def_primitive
 
@@ -14,6 +14,12 @@ def retain(interpreter):
 def restore(interpreter):
     """( -- obj | obj -- )"""
     interpreter.datastack.push(interpreter.retainstack.pop())
+
+
+def datastack(interpreter):
+    """( -- stack )"""
+    stack = Stack(interpreter.datastack)
+    interpreter.datastack.push(stack)
 
 
 def set_datastack(interpreter):
@@ -34,6 +40,11 @@ def set_errorstack(interpreter):
 def call(interpreter):
     """( quot --  )"""
     interpreter.call()
+
+
+def execute(interpreter):
+    """( word -- )"""
+    interpreter.execute(interpreter.datastack.pop())
 
 
 def drop(interpreter):
@@ -101,19 +112,6 @@ def swap(interpreter):
 def swapd(interpreter):
     """( x y z -- y x z )"""
     stack[-2], stack[-3] = stack[-3], stack[-2]
-
-
-def print_line(interpreter):
-    """( any -- )"""
-    value = interpreter.datastack.pop()
-    print(print_object(value))
-
-
-def show_stack(interpreter):
-    """( -- )"""
-    interpreter.datastack.push(interpreter.datastack)
-    print('---- data stack:')
-    print_line(interpreter)
 
 
 def if_else(interpreter):
