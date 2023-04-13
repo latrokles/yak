@@ -3,6 +3,7 @@ import importlib
 from yak.primitives.ffi import load_module
 from yak.primitives.vocabulary import def_vocabulary
 from yak.primitives.word import def_primitive
+from yak.util import get_logger
 from yak.vocab.quotations import make_quotation
 
 

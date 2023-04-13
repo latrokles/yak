@@ -11,9 +11,6 @@ from yak.primitives.quotation import Quotation
 from yak.primitives.stack import Stack
 from yak.primitives.strings import blank
 from yak.primitives.word import Word, WordRef
-from yak.util import get_logger
-
-LOG = get_logger()
 
 
 class ScanError(YakError):
@@ -160,6 +157,13 @@ class Parser:
         self.mode = ParseMode.RAW
         yield self
         self.mode = prev_mode
+
+    @contextmanager
+    def in_vocab(self, new_vocab: str) -> Parser:
+        curr_vocab = self.interpreter.current_vocab
+        self.interpreter.set_current_vocabulary(new_vocab)
+        yield self
+        self.interpreter.set_current_vocabulary(curr_vocab)
 
     def push_state(self, delimiter: str|None = None) -> None:
         if delimiter is not None:

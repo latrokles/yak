@@ -1,3 +1,4 @@
+from yak.parsing import ParseError
 from yak.primitives.quotation import Quotation
 from yak.primitives.vocabulary import def_vocabulary
 from yak.primitives.word import def_primitive
@@ -50,9 +51,26 @@ def DEFER(interpreter):
     """( -- )"""
     parser = interpreter.get_global('*parser*')
     with parser.raw() as p:
-        interpreter.datastack.push(p.next_value())
-        interpreter.datastack.push(Quotation())
-        define_compound(interpreter)
+        deferred_word = p.next_value()
+        _defer_definition(interpreter, deferred_word)
+
+
+def DEFER_FROM(interpreter):
+    """( -- vocab deferrer words )"""
+    parser = interpreter.get_global('*parser*')
+
+    with parser.raw() as p:
+        vocab = p.next_value()
+
+        with parser.in_vocab(vocab) as scoped_p:
+            while (word := scoped_p.next_value()) != ';':
+                _defer_definition(interpreter, word)
+
+
+def _defer_definition(interpreter, word: str):
+    interpreter.datastack.push(word)
+    interpreter.datastack.push(Quotation())
+    define_compound(interpreter)
 
 
 def DEFINE(interpreter):
@@ -74,6 +92,13 @@ def ENDDEF(interpreter):
     definer = interpreter.datastack.pop()
     definer.eval(interpreter)
     parser.pop_exclusive_state(';')
+
+
+def START_COMMENT(interpreter):
+    # TODO parse comments and add them to parsed objects
+    parser = interpreter.get_global('*parser*')
+    with parser.raw() as p:
+        while ((raw_txt := parser.next_value()) != '|#'): pass
 
 
 def L_BRACKET(interpreter):
@@ -105,7 +130,9 @@ SYNTAX = (def_vocabulary('syntax')
           .store(def_primitive(__VOCAB__, 'IN:', IN, parse=True))
           .store(def_primitive(__VOCAB__, 'USE:', USE, parse=True))
           .store(def_primitive(__VOCAB__, 'DEFER:', DEFER, parse=True))
+          .store(def_primitive(__VOCAB__, 'DEFER-FROM:', DEFER_FROM, parse=True))
           .store(def_primitive(__VOCAB__, 'PRIMITIVE:', PRIMITIVE, parse=True))
+          .store(def_primitive(__VOCAB__, '#|', START_COMMENT, parse=True))
           .store(def_primitive(__VOCAB__, '[', L_BRACKET, parse=True))
           .store(def_primitive(__VOCAB__, ']', R_BRACKET, parse=True))
           .store(def_primitive(__VOCAB__, '(', L_BRACE, parse=True))
