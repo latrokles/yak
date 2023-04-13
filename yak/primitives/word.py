@@ -15,7 +15,13 @@ class WordRef(YakPrimitive):
     def __str__(self) -> str:
         return self.name
 
-    def print_object(self) -> str:
+    def fmt(self) -> str:
+        return self.name
+
+    def prettyformat(self) -> str:
+        return self.fmt()
+
+    def __str__(self) -> str:
         return self.name
 
 
@@ -37,10 +43,13 @@ class Word(YakPrimitive):
     def eval(self, vm):
         raise NotImplementedError(f'{self.name} is not implemented.')
 
-    def __str__(self) -> str:
+    def fmt(self) -> str:
         return self.name
 
-    def print_object(self) -> str:
+    def prettyformat(self) -> str:
+        return self.fmt()
+
+    def __str__(self) -> str:
         return self.name
 
 

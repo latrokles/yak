@@ -19,6 +19,9 @@ class Namespace(YakPrimitive):
     def set_binding(self, binding: str, value: Value):
         self.bindings[binding] = value
 
-    def print_object(self) -> str:
+    def fmt(self) -> str:
+        return f'*NS:{self.name}*'
+
+    def prettyformat(self) -> str:
         contents = ' '.join(self.bindings.keys())
-        return f'`{self.name}` bindings: {contents}'
+        return f'NS:{self.name} - bindings: {contents}'

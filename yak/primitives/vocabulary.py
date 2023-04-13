@@ -25,6 +25,13 @@ class Vocabulary:
     def list(self) -> list[Word]:
         return self.defs.values()
 
+    def fmt(self) -> str:
+        return f"VOCAB: {self.name}"
+
+    def prettyformat(self) -> str:
+        contents = " ".join(word for word in self.defs.keys())
+        return f"{self.fmt()} WORDS: {contents}"
+
 
 def def_vocabulary(name: str) -> Vocabulary:
     return Vocabulary(name)

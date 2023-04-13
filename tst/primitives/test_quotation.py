@@ -45,5 +45,5 @@ def test_tail_returns_empty_quotation_if_quotation_is_empty(quote):
 
 
 @pytest.mark.parametrize('values', [[1, 2, 3, 4]])
-def test_print_object_returns_string_representation_of_the_quotation(quote):
-    assert quote.print_object() == '[ 1 2 3 4 ]'
+def test_prettyformat_returns_string_representation_of_the_quotation(quote):
+    assert quote.prettyformat() == '[ 1 2 3 4 ]'

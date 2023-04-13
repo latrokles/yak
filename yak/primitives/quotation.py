@@ -1,6 +1,6 @@
 from collections import UserList
 
-from yak.primitives import Value, YakPrimitive, print_object
+from yak.primitives import Value, YakPrimitive, fmt, prettyformat
 
 
 class Quotation(UserList, YakPrimitive):
@@ -50,12 +50,14 @@ class Quotation(UserList, YakPrimitive):
         """
         return self[1:]
 
-    def print_object(self) -> str:
-        """
-        :returns: representation of the quotation.
-        :rtype: str.
-        """
+    def fmt(self) -> str:
         if self.empty:
             return '[ ]'
-        contents = ' '.join(print_object(value) for value in self)
+        contents = ' '.join(fmt(value) for value in self)
+        return f'[ {contents} ]'
+
+    def prettyformat(self) -> str:
+        if self.empty:
+            return '[ ]'
+        contents = ' '.join(prettyformat(value) for value in self)
         return f'[ {contents} ]'

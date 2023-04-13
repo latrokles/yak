@@ -1,7 +1,7 @@
 from collections import deque
 from collections.abc import Iterator
 
-from yak.primitives import Value, YakError, YakPrimitive, print_object
+from yak.primitives import Value, YakError, YakPrimitive, fmt, prettyformat
 
 
 class StackUnderflowError(YakError):
@@ -94,7 +94,16 @@ class Stack(deque, YakPrimitive):
         """
         return reversed(self)
 
-    def print_object(self) -> str:
-        contents = [print_object(value) for value in self]
+    def fmt(self) -> str:
+        if self.empty():
+            return ""
+        contents = [fmt(value) for value in self]
         contents[-1] = f'{contents[-1]} <- TOS'
-        return '\n'.join(contents)
+        return '\n' + '\n'.join(contents)
+
+    def prettyformat(self) -> str:
+        if self.empty():
+            return ""
+        contents = [prettyformat(value) for value in self]
+        contents[-1] = f'{contents[-1]} <- TOS'
+        return '\n' + '\n'.join(contents)

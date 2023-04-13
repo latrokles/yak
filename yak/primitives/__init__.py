@@ -6,7 +6,10 @@ from typing import Callable, ClassVar
 
 
 class YakPrimitive:
-    def print_object(self) -> str:
+    def fmt(self) -> str:
+        return str(self)
+
+    def prettyformat(self) -> str:
         return repr(self)
 
 
@@ -18,7 +21,22 @@ class YakUndefinedError(YakError):
     """Raised when a word is undefined."""
 
 
-def print_object(value: Value) -> str:
+def prettyformat(value: Value) -> str:
+    if value is None:
+        return fmt(value)
+
+    match value:
+        case bool():
+            return fmt(value)
+        case str():
+            return repr(value).replace("'", '"')
+        case YakPrimitive():
+            return value.prettyformat()
+        case _:
+            return repr(value)
+
+
+def fmt(value: Value) -> str:
     if value is None:
         return 'nil'
 
@@ -26,11 +44,12 @@ def print_object(value: Value) -> str:
         case bool():
             return str(value)[0].lower()
         case str():
-            return repr(value).replace("'", '"')
+            return value
         case YakPrimitive():
-            return value.print_object()
+            return value.fmt()
         case _:
             return str(value)
+
 
 
 @dataclass(frozen=True)
