@@ -1,5 +1,6 @@
 IN: kernel
-
+DEFER-FROM: namespaces get-global ;
+DEFER-FROM: sequences shift ;
 
 PRIMITIVE: >r vocab.kernel.retain ( obj -- ) ;
 PRIMITIVE: r> vocab.kernel.restore ( -- obj ) ;
@@ -9,6 +10,7 @@ PRIMITIVE: set-retainstack vocab.kernel.set_retainstack ( quot -- ) ;
 PRIMITIVE: set-errorstack vocab.kernel.set_errorstack ( quot -- ) ;
 
 PRIMITIVE: call vocab.kernel.call ( quot -- ) ;
+PRIMITIVE: execute vocab.kernel.execute ( word -- ) ;
 PRIMITIVE: drop vocab.kernel.drop ( x -- ) ;
 PRIMITIVE: dup vocab.kernel.dup ( x -- x x ) ;
 PRIMITIVE: dupd vocab.kernel.dupd ( x y -- x x y ) ;
@@ -23,10 +25,17 @@ PRIMITIVE: swapd vocab.kernel.swapd ( x y z -- y x z ) ;
 
 PRIMITIVE: if-else vocab.kernel.if_else ( ? quot quot -- ... ) ;
 
+PRIMITIVE: datastack vocab.kernel.datastack ( -- stack ) ;
+: callstack ( -- callstack ) "*interpreter*" get-global "callstack" attr> ;
+: retainstack ( -- retainstack ) "*interpreter*" get-global "retainstack" attr> ;
+: errorstack ( -- errorstack ) "*interpreter*" get-global "errorstack" attr> ;
+
 : clear-datastack   ( -- ) [ ] set-datastack ;
 : clear-retainstack ( -- ) [ ] set-retainstack ;
 : clear-errorstack  ( -- ) [ ] set-errorstack ;
 : clear ( -- ) clear-datastack clear-retainstack clear-errorstack ;
+
+: r-drop ( -- ) r> drop ;
 
 : eval ( str -- ) parse call ;
 
@@ -57,9 +66,12 @@ PRIMITIVE: if-else vocab.kernel.if_else ( ? quot quot -- ... ) ;
 : when   ( ? quot -- ... ) swap [ call ] [ drop ] if-else ;
 : unless ( ? quot -- ... ) swap [ drop ] [ call ] if-else ;
 
+
 DEFER: while
 : while ( pred body -- ... )
-        swap [ call ] keep swap
-	[ >r [ call ] keep r> swap while ]
-	[ 2drop ]
+	2dup >r >r >r call
+	[ r> call r> r> while ]
+	[ r-drop r-drop r-drop ]
 	if-else ;
+
+: curry ( obj quot -- quot ) swap shift ;

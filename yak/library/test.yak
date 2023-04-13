@@ -1,0 +1,4 @@
+10 [ dup 0 > ] [ dup print retainstack. 1 - ] while
+datastack.
+callstack.
+retainstack.

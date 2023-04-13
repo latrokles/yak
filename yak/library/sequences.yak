@@ -1,0 +1,17 @@
+IN: sequences
+
+: count ( seq -- n ) 1arg "builtins" "len" ffi-obj swap invoke ;
+: in-bounds? ( seq n -- ? ) ;
+: out-of-bounds? ( seq n -- ? ) ;
+: nth  ( seq n -- el )  1arg  [ "__getitem__" attr> ] dip invoke ;
+: nth= ( seq n val -- ) 2args [ "__setitem__" attr> ] dip invoke drop ;
+
+: append  ( seq val -- seq ) 1arg [ dup "append" attr> ] dip invoke drop ;
+: shift   ( seq val -- seq ) 0 swap 2args [ dup "insert" attr> ] dip invoke drop ;
+: push    ( seq val -- seq ) append ;
+: pop     ( seq val -- seq ) narg [ "pop" attr> ] dip invoke ;
+: unshift ( seq -- val ) 0 1arg [ "pop" attr> ] dip invoke ;
+
+: any?  ( seq pred -- ? ) ;
+: all?  ( seq pred -- ? ) ;
+: none? ( seq pred -- ? ) ;

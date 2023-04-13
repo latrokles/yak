@@ -1,0 +1,16 @@
+IN: prettyprint
+
+: prettyformat ( value -- ) "prettyformat" attr> narg invoke ;
+: prettyprint  ( value -- ) prettyformat print ;
+
+: datastack. ( -- ) "" print
+                    "--- Data stack:" print
+		    datastack prettyprint ;
+
+: callstack. ( -- ) "" print
+                    "--- Call stack:" print
+		    callstack prettyprint ;
+
+: retainstack. ( -- ) "" print
+                      "--- Retain stack:" print
+		      retainstack prettyprint ;

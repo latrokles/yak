@@ -4,9 +4,8 @@ IN: repl
 : activate-repl  ( -- )   "*repl-active*" t set-global ;
 : continue-repl? ( -- ? ) "*repl-active*" get-global ;
 : repl-read ( -- str ) ">> " read ;
-: repl-loop ( -- ) [ continue-repl? ] [ repl-read eval ] while ;
+: repl-loop ( -- ) [ continue-repl? ] [ repl-read eval datastack. ] while ;
 : start-repl ( -- ) activate-repl repl-loop ;
 : quit-repl ( -- ) "bye!" print "*repl-active*" f set-global ;
 
 IN: *scratch*
-start-repl
