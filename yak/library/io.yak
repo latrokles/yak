@@ -3,5 +3,7 @@ IN: io
 PRIMITIVE: file-contents vocab.io.get_file_contents ( str -- str ) ;
 PRIMITIVE: file-contents= vocab.io.set_file_contents ( str str -- ) ;
 
-PRIMITIVE: print vocab.io.println ( str -- ) ;
+PRIMITIVE: _print vocab.io.println ( str -- ) ;
 PRIMITIVE: read vocab.io.readln ( -- str ) ;
+
+: print ( obj -- ) >str _print ;

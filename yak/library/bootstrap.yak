@@ -1,8 +1,8 @@
 IN: bootstrap
 
 "library/ffi.yak"          resource-path run-file
-"library/io.yak"           resource-path run-file
 "library/kernel.yak"       resource-path run-file
+"library/io.yak"           resource-path run-file
 "library/namespaces.yak"   resource-path run-file
 "library/math.yak"         resource-path run-file
 "library/sequences.yak"    resource-path run-file

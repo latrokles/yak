@@ -75,3 +75,9 @@ DEFER: while
 	if-else ;
 
 : curry ( obj quot -- quot ) swap shift ;
+
+#| TODO move this to a more reasonable vocab (objects?) |#
+: >str ( obj -- str )
+       1arg
+       "yak.primitives" "fmt" ffi-obj
+       swap invoke ;

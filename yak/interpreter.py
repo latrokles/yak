@@ -165,8 +165,6 @@ class Interpreter(YakPrimitive):
         self.active = True
         while self.active:
             try:
-                self.logger.debug(f'callframe: {prettyformat(self.callframe)}')
-                self.logger.debug(f"datastack: {prettyformat(self.datastack)}")
                 if self.callframe is None or self.callframe.empty:
                     if self.callstack.empty():
                         break

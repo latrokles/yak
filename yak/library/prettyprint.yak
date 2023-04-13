@@ -1,6 +1,10 @@
 IN: prettyprint
 
-: prettyformat ( value -- ) "prettyformat" attr> narg invoke ;
+: prettyformat ( value -- ) 
+	       1arg
+               "yak.primitives" "prettyformat" ffi-obj 
+	       swap invoke ;
+
 : prettyprint  ( value -- ) prettyformat print ;
 
 : datastack. ( -- ) "" print
