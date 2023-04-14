@@ -16,6 +16,7 @@
 - STDLIB: generic words
 - STDLIB: unit-test (assert, test)
   - see [Test Anything Protocol](https://testanything.org/) and it's usage in [MakoVM](https://github.com/JohnEarnest/Mako/tree/master/lib/Test) as a place to start?
+- FEAT: vocabulary imports and word resolution.
 - FEAT: stack effect parsing
 - FEAT: stack effect checking
 - FEAT: object system
