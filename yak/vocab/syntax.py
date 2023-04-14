@@ -102,13 +102,13 @@ def START_COMMENT(interpreter):
 
 
 def L_BRACKET(interpreter):
-    """( -- * )"""
+    """( -- quot )"""
     interpreter.get_global('*parser*').push_state(']')
     interpreter.datastack.push(Quotation())
 
 
 def R_BRACKET(interpreter):
-    """( quot -- * )"""
+    """( quot -- quot )"""
     quote = interpreter.datastack.pop()
     parser = interpreter.get_global('*parser*')
     parser.current_accumulator.append(quote)
@@ -116,6 +116,31 @@ def R_BRACKET(interpreter):
 
 
 def L_BRACE(interpreter):
+    """( -- definer quot )"""
+    interpreter.get_global('*parser*').push_state('}')
+    interpreter.datastack.push(interpreter.fetch_word('quot>tuple'))
+    interpreter.datastack.push(Quotation())
+
+
+def R_BRACE(interpreter):
+    """( definer quot -- obj )"""
+    swap(interpreter)
+    definer = interpreter.datastack.pop()
+    definer.eval(interpreter)
+    parser = interpreter.get_global('*parser*')
+    value = interpreter.datastack.pop()
+    parser.current_accumulator.append(value)
+    parser.pop_state('}')
+
+
+def DEFASSOC(interpreter):
+    """( -- definer quot )"""
+    interpreter.get_global('*parser*').push_state('}')
+    interpreter.datastack.push(interpreter.fetch_word('quot>assoc'))
+    interpreter.datastack.push(Quotation())
+
+
+def L_PAREN(interpreter):
     # TODO implement proper stack effect parsing
     parser = interpreter.get_global('*parser*')
     with parser.raw() as p:
@@ -135,6 +160,9 @@ SYNTAX = (def_vocabulary('syntax')
           .store(def_primitive(__VOCAB__, '#|', START_COMMENT, parse=True))
           .store(def_primitive(__VOCAB__, '[', L_BRACKET, parse=True))
           .store(def_primitive(__VOCAB__, ']', R_BRACKET, parse=True))
-          .store(def_primitive(__VOCAB__, '(', L_BRACE, parse=True))
+          .store(def_primitive(__VOCAB__, 'A{', DEFASSOC, parse=True))
+          .store(def_primitive(__VOCAB__, '{', L_BRACE, parse=True))
+          .store(def_primitive(__VOCAB__, '}', R_BRACE, parse=True))
+          .store(def_primitive(__VOCAB__, '(', L_PAREN, parse=True))
           .store(def_primitive(__VOCAB__, ':', DEFINE, parse=True))
           .store(def_primitive(__VOCAB__, ';', ENDDEF, parse=True)))

@@ -30,6 +30,12 @@ def prettyformat(value: Value) -> str:
             return fmt(value)
         case str():
             return repr(value).replace("'", '"')
+        case tuple():
+            contents = " ".join(prettyformat(val) for val in value)
+            return "{ " + contents + " }"
+        case dict():
+            contents = " ".join(f"{prettyformat(k)}>>{prettyformat(v)}" for k, v in value.items())
+            return "A{ " + contents + " }"
         case YakPrimitive():
             return value.prettyformat()
         case _:
@@ -45,6 +51,12 @@ def fmt(value: Value) -> str:
             return str(value)[0].lower()
         case str():
             return value
+        case tuple():
+            contents = " ".join(fmt(val) for val in value)
+            return "{ " + contents + " }"
+        case dict():
+            contents = " ".join(f"{fmt(k)}>>{fmt(v)}" for k, v in value.items())
+            return "A{ " + contents + " }"
         case YakPrimitive():
             return value.fmt()
         case _:

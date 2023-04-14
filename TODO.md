@@ -1,16 +1,10 @@
 # TODO
 
-- stack effect parsing
-- stack effect checking
-- parse assocs (python dicts)
-- parse tuples (python tuples)
 - generic words
 - STDLIB: sequences, more words, iteration (each, filter, map, reduce, zip)
 - STDLIB: strings
 - STDLIB: more control flow words (until, repeat, loop)
 - STDLIB: more io words
-- STDLIB: more prettyprint
-  - FIX: can't print t/f/nil rn
 - STDLIB: stacks (data, call, retain, error)
 - STDLIB: net
 - STDLIB: http, start simple (http client)
@@ -22,6 +16,8 @@
 - STDLIB: fs (filesystem words)
 - STDLIB: generic words
 - STDLIB: unit-test (assert, test)
+- FEAT: stack effect parsing
+- FEAT: stack effect checking
 
 
 - control flow

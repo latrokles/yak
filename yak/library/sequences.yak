@@ -1,5 +1,9 @@
 IN: sequences
 
+PRIMITIVE: quot>assoc vocab.sequences.quotation_to_assoc ( quot -- assoc ) ;
+PRIMITIVE: quot>tuple vocab.sequences.quotation_to_tuple ( quot -- tuple ) ;
+PRIMITIVE: partition vocab.sequences.partition ( quot n -- quot ) ;
+
 : count ( seq -- n ) 1arg "builtins" "len" ffi-obj swap invoke ;
 : in-bounds? ( seq n -- ? ) ;
 : out-of-bounds? ( seq n -- ? ) ;
