@@ -1,9 +1,8 @@
 # TODO
 
-- generic words
 - STDLIB: sequences, more words, iteration (each, filter, map, reduce, zip)
 - STDLIB: strings
-- STDLIB: more control flow words (until, repeat, loop)
+- STDLIB: more control flow words (loop)
 - STDLIB: more io words
 - STDLIB: stacks (data, call, retain, error)
 - STDLIB: net
@@ -18,14 +17,7 @@
 - STDLIB: unit-test (assert, test)
 - FEAT: stack effect parsing
 - FEAT: stack effect checking
-
-
-- control flow
-	- `[ ... ] [ ... ] while`
-	- `[ ... ] [ ... ] until`
-	- `X [ ... ] repeat`
-
-- object system
+- FEAT: object system
   - classes
   - generic words
   - methods

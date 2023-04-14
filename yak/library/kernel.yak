@@ -66,6 +66,8 @@ PRIMITIVE: datastack vocab.kernel.datastack ( -- stack ) ;
 : when   ( ? quot -- ... ) swap [ call ] [ drop ] if-else ;
 : unless ( ? quot -- ... ) swap [ drop ] [ call ] if-else ;
 
+: compose ( quot1 quot2 -- quot ) 2args "operator" "add" ffi-obj swap invoke ;
+: prepose ( quot1 quot2 -- quot ) swap compose ;
 
 DEFER: while
 : while ( pred body -- ... )
@@ -73,6 +75,19 @@ DEFER: while
 	[ r> call r> r> while ]
 	[ r-drop r-drop r-drop ]
 	if-else ;
+
+DEFER: until
+: until ( pred body -- ... )
+	2dup >r >r >r call
+	[ r-drop r-drop r-drop ]
+	[ r> call r> r> while ]
+	if-else ;
+
+DEFER-FROM: math >  - ;
+: repeat ( n body -- ... )
+         [ dup 0 > ] swap	#| set up predicate |#
+	 [ 1 - ] prepose        #| add counter decrement to body |#
+	 while drop ;
 
 : curry ( obj quot -- quot ) swap shift ;
 
