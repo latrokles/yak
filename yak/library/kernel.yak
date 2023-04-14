@@ -80,7 +80,7 @@ DEFER: until
 : until ( pred body -- ... )
 	2dup >r >r >r call
 	[ r-drop r-drop r-drop ]
-	[ r> call r> r> while ]
+	[ r> call r> r> until ]
 	if-else ;
 
 DEFER-FROM: math >  - ;

@@ -1,0 +1,15 @@
+IN: examples.looping
+
+: while-example ( -- ) 10 [ dup 0 > ] [ "hello" print 1 - ] while drop ;
+: until-example ( -- ) 10 [ dup 0 = ] [ "hello" print 1 - ] until drop ;
+: repeat-example ( -- ) 10 [ "hello" print ] repeat ;
+
+
+: main ( -- )
+       "print 'hello' while counter is greater than 0" print while-example
+       "" print
+       "" print
+       "print 'hello' until counter is equal to 0" print until-example
+       "" print
+       "" print
+       "print 'hello' 10 times" print repeat-example ;

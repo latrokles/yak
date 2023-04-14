@@ -15,6 +15,7 @@
 - STDLIB: fs (filesystem words)
 - STDLIB: generic words
 - STDLIB: unit-test (assert, test)
+  - see [Test Anything Protocol](https://testanything.org/) and it's usage in [MakoVM](https://github.com/JohnEarnest/Mako/tree/master/lib/Test) as a place to start?
 - FEAT: stack effect parsing
 - FEAT: stack effect checking
 - FEAT: object system
