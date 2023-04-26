@@ -40,5 +40,5 @@ IN: math
 : pos?  ( n -- ? ) neg? not ;
 
 : dec ( x -- y ) 1 - ;
-: int ( x -- y ) 1 + ;
+: inc ( x -- y ) 1 + ;
 : neg ( x -- y ) -1 * ;

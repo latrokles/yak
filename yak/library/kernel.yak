@@ -19,7 +19,7 @@ PRIMITIVE: nip vocab.kernel.nip ( x y -- y ) ;
 PRIMITIVE: over vocab.kernel.over ( x y -- x y x ) ;
 PRIMITIVE: pick vocab.kernel.pick ( x y z -- x y z x ) ;
 PRIMITIVE: rot-l vocab.kernel.rotl ( x y z -- y z x ) ;
-PRIMITIVE: rot-r vocab.kernel.rotl ( x y z -- z x y ) ;
+PRIMITIVE: rot-r vocab.kernel.rotr ( x y z -- z x y ) ;
 PRIMITIVE: swap vocab.kernel.swap ( x y -- y x ) ;
 PRIMITIVE: swapd vocab.kernel.swapd ( x y z -- y x z ) ;
 
@@ -81,7 +81,7 @@ DEFER-FROM: math not ;
         >r [ not ] compose r>
 	while ;
 
-DEFER-FROM: math >  - ;
+DEFER-FROM: math > - ;
 : repeat ( n body -- ... )
          [ dup 0 > ] swap	#| set up predicate |#
 	 [ 1 - ] prepose        #| add counter decrement to body |#
