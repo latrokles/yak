@@ -26,6 +26,16 @@ def disassemble_instruction(chunk: Chunk, offset: int) -> int:
     match instruction:
         case Opcode.OP_CONSTANT:
             return constant_instruction('OP_CONSTANT', chunk, offset)
+        case Opcode.OP_ADD:
+            return simple_instruction('OP_ADD', offset)
+        case Opcode.OP_SUBTRACT:
+            return simple_instruction('OP_SUBTRACT', offset)
+        case Opcode.OP_MULTIPLY:
+            return simple_instruction('OP_MULTIPLY', offset)
+        case Opcode.OP_DIVIDE:
+            return simple_instruction('OP_DIVIDE', offset)
+        case Opcode.OP_NEGATE:
+            return simple_instruction('OP_NEGATE', offset)
         case Opcode.OP_RETURN:
             return simple_instruction('OP_RETURN', offset)
         case _:
@@ -34,7 +44,7 @@ def disassemble_instruction(chunk: Chunk, offset: int) -> int:
 
 
 def constant_instruction(name: str, chunk: Chunk, offset: int) -> int:
-    const = chunk.code[offset]
+    const = chunk.code[offset+1]
     print(f'{name:16s} {const} "', end='')
     print_value(chunk.constants[const])
     print('"')

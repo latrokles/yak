@@ -1,6 +1,6 @@
 from dataclasses import dataclass, field
 from enum import Enum
-from typing import Any
+from typing import Any, Callable
 
 from yak.vm.chunk import Chunk
 from yak.vm.debug import DEBUG_TRACE_EXECUTION, disassemble_instruction
@@ -28,25 +28,24 @@ class InterpretResult(Enum):
     INTERPRET_RUNTIME_ERROR = 0x10
 
 
-
 @dataclass
 class VirtualMachine:
     chunk: Chunk|None = None
     ip: int = 0
 
-    d_stack: list[Any] = field(default_factory=list)
+    d_stack: list[Value] = field(default_factory=list)       # TODO limit data stack size?
     c_stack: list[CallFrame] = field(default_factory=list)
 
-    def get_value(self, index: int) -> Any:
-        return self.d_stack[index]
+    def reset_stack(self) -> None:
+        self.d_stack = []
 
-    def peek_value(self) -> Any:
+    def peek_value(self) -> Value:
         return self.d_stack[-1]
 
-    def pop_value(self) -> Any:
+    def pop_value(self) -> Value:
         return self.d_stack.pop()
 
-    def push_value(self, value: Any):
+    def push_value(self, value: Value):
         self.d_stack.append(value)
 
     def interpret(self, chunk: Chunk) -> InterpretResult:
@@ -56,15 +55,33 @@ class VirtualMachine:
     def run(self) -> InterpretResult:
         while True:
             if DEBUG_TRACE_EXECUTION:
+                print('          ', end='')
+                for val in self.d_stack:
+                    print('[ ', end='')
+                    print_value(val)
+                    print(' ]', end='')
+                print()
                 disassemble_instruction(self.chunk, self.ip)
 
-            match (instruction := self.read_byte()):
+            instruction = self.read_byte()
+            match instruction:
                 case Opcode.OP_CONSTANT:
                     constant = self.read_constant()
-                    print_value(constant)
-                    print()
-                    break;
+                    self.push_value(constant)
+                case Opcode.OP_ADD:
+                    self.binary_op(lambda a, b: a + b)
+                case Opcode.OP_SUBTRACT:
+                    self.binary_op(lambda a, b: a - b)
+                case Opcode.OP_MULTIPLY:
+                    self.binary_op(lambda a, b: a * b)
+                case Opcode.OP_DIVIDE:
+                    self.binary_op(lambda a, b: a / b)
+                case Opcode.OP_NEGATE:
+                    # TODO replace in place ?
+                    self.push_value(-self.pop_value())
                 case Opcode.OP_RETURN:
+                    print_value(self.pop_value())
+                    print()
                     return InterpretResult.INTERPRET_OK
                 case _:
                     return InterpretResult.INTERPRET_RUNTIME_ERROR
@@ -76,3 +93,8 @@ class VirtualMachine:
 
     def read_constant(self) -> Value:
         return self.chunk.constants[self.read_byte()]
+
+    def binary_op(self, func: Callable) -> None:
+        b = self.pop_value()
+        a = self.pop_value()
+        self.push_value(func(a, b))
