@@ -3,6 +3,7 @@ from enum import Enum
 from typing import Any
 
 from yak.vm.chunk import Chunk
+from yak.vm.debug import DEBUG_TRACE_EXECUTION, disassemble_instruction
 from yak.vm.opcode import Opcode
 from yak.vm.value import Value, print_value
 
@@ -54,6 +55,9 @@ class VirtualMachine:
 
     def run(self) -> InterpretResult:
         while True:
+            if DEBUG_TRACE_EXECUTION:
+                disassemble_instruction(self.chunk, self.ip)
+
             match (instruction := self.read_byte()):
                 case Opcode.OP_CONSTANT:
                     constant = self.read_constant()

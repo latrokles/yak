@@ -1,6 +1,9 @@
+from yak.util import getenv_bool
 from yak.vm.chunk import Chunk
 from yak.vm.opcode import Opcode
 from yak.vm.value import print_value
+
+DEBUG_TRACE_EXECUTION = getenv_bool('TRACE_EXECUTION', False)
 
 
 def disassemble_chunk(chunk: Chunk, name: str) -> None:

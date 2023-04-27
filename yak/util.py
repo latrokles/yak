@@ -12,6 +12,14 @@ HOME = os.getenv('HOME')
 HISTORY = YAKDIR / 'yak.history'
 
 
+def getenv_bool(name: str, default: bool = False) -> bool:
+    def parse_bool(val: str|bool) -> bool:
+        if isinstance(val, bool):
+            return val
+        return val.lower() in ('true', 't')
+    return parse_bool(os.getenv(name, default))
+
+
 def set_up_yakdir():
     if YAKDIR.exists():
         return
