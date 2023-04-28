@@ -50,8 +50,12 @@ class VirtualMachine:
         self.d_stack.append(value)
 
     def interpret(self, source: str) -> InterpretResult:
-        compile(source)
-        return InterpretResult.INTERPRET_OK
+        chunk = Chunk()
+        if not compile(source, chunk):
+            return InterpretResult.INTERPRET_COMPILE_ERROR
+
+        self.chunk = chunk
+        return self.run()
 
     def run(self) -> InterpretResult:
         while True:
