@@ -3,6 +3,7 @@ from enum import Enum
 from typing import Any, Callable
 
 from yak.vm.chunk import Chunk
+from yak.vm.compiler import compile
 from yak.vm.debug import DEBUG_TRACE_EXECUTION, disassemble_instruction
 from yak.vm.opcode import Opcode
 from yak.vm.value import Value, print_value
@@ -48,9 +49,9 @@ class VirtualMachine:
     def push_value(self, value: Value):
         self.d_stack.append(value)
 
-    def interpret(self, chunk: Chunk) -> InterpretResult:
-        self.chunk = chunk
-        return self.run()
+    def interpret(self, source: str) -> InterpretResult:
+        compile(source)
+        return InterpretResult.INTERPRET_OK
 
     def run(self) -> InterpretResult:
         while True:
