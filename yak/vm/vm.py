@@ -3,7 +3,7 @@ from enum import Enum
 from typing import Any, Callable
 
 from yak.vm.chunk import Chunk
-from yak.vm.compiler import compile
+from yak.vm.compiler import Compiler
 from yak.vm.debug import DEBUG_TRACE_EXECUTION, disassemble_instruction
 from yak.vm.opcode import Opcode
 from yak.vm.value import Value, print_value
@@ -51,10 +51,11 @@ class VirtualMachine:
 
     def interpret(self, source: str) -> InterpretResult:
         chunk = Chunk()
-        if not compile(source, chunk):
+        if not Compiler().compile(source, chunk):
             return InterpretResult.INTERPRET_COMPILE_ERROR
 
         self.chunk = chunk
+        self.ip = 0
         return self.run()
 
     def run(self) -> InterpretResult:

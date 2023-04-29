@@ -3,6 +3,7 @@ from yak.vm.chunk import Chunk
 from yak.vm.opcode import Opcode
 from yak.vm.value import print_value
 
+DEBUG_PRINT_CODE = getenv_bool('PRINT_CODE', False)
 DEBUG_TRACE_EXECUTION = getenv_bool('TRACE_EXECUTION', False)
 
 

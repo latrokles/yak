@@ -1,6 +1,8 @@
 from dataclasses import InitVar, dataclass, field
 from typing import Callable, ClassVar
 
+from yak.vm.chunk import Chunk
+from yak.vm.opcode import Opcode
 from yak.vm.scanner import Scanner, Token
 from yak.vm.value import Value
 
@@ -27,31 +29,18 @@ class ParseError(Exception):
 
 @dataclass
 class Parser:
-    vm: ...
+    compiler: ...
     scanner: Scanner
     parsers: tuple[Callable] = field(init=False)
     EOF: ClassVar[str] = '#EOF#'
 
     def __post_init__(self):
-        self.parsers = (self.parse_string, self.parse_number, self.parse_word)
-        self.vm.push_value([])
-        self.expected_delimiters = Stack()
+        self.parsers = (self.parse_string, self.parse_number)
 
-    @property
-    def current_accumulator(self) -> list[Value]:
-        accum = self.vm.peek_value()
-        if not isinstance(accum, list):
-            msg = f'Invalid Parser State. expected=list, found={type(accum)}'
-            raise ParseError(msg)
-        return accum
-
-    def parse(self) -> Value:
+    def parse(self, ) -> None:
         while (value := self.next_value()) != Parser.EOF:
-            if isinstance(value, WordRef) and value.parsing:
-                continue
-            self.current_accumulator.append(value)
-
-        return self.current_accumulator
+            constant = self.compiler.make_constant(value)
+            self.compiler.emit_bytes(Opcode.OP_CONSTANT, constant, self.scanner.row)
 
     def next_value(self) -> Value:
         if (token := self.scanner.scan_token()) is None:

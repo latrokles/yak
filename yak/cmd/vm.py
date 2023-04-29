@@ -44,7 +44,12 @@ def _read_file(pathname: str) -> str:
 
 def _run_repl():
     vm = VirtualMachine()
+    prompt = ':> '
     while True:
-        line = input('> ')
-        vm.interpret(line)
+        line = input(prompt)
+        result = vm.interpret(line)
+        if result != InterpretResult.INTERPRET_OK:
+            prompt = f'{result}:> '
+        else:
+            prompt = ':> '
 
