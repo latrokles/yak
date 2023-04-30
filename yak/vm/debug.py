@@ -27,6 +27,10 @@ def disassemble_instruction(chunk: Chunk, offset: int) -> int:
     match instruction:
         case Opcode.OP_CONSTANT:
             return constant_instruction('OP_CONSTANT', chunk, offset)
+        case Opcode.OP_DEFINE_GLOBAL:
+            return simple_instruction('OP_DEFINE_GLOBAL', offset)
+        case Opcode.OP_GET_GLOBAL:
+            return simple_instruction('OP_GET_GLOBAL', offset)
         case Opcode.OP_ADD:
             return simple_instruction('OP_ADD', offset)
         case Opcode.OP_SUBTRACT:
@@ -37,6 +41,8 @@ def disassemble_instruction(chunk: Chunk, offset: int) -> int:
             return simple_instruction('OP_DIVIDE', offset)
         case Opcode.OP_NEGATE:
             return simple_instruction('OP_NEGATE', offset)
+        case Opcode.OP_PRINT:
+            return simple_instruction('OP_PRINT', offset)
         case Opcode.OP_RETURN:
             return simple_instruction('OP_RETURN', offset)
         case _:

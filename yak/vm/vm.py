@@ -36,6 +36,7 @@ class VirtualMachine:
 
     d_stack: list[Value] = field(default_factory=list)       # TODO limit data stack size?
     c_stack: list[CallFrame] = field(default_factory=list)
+    GLOBALS: dict[str, Value] = field(default_factory=dict)
 
     def reset_stack(self) -> None:
         self.d_stack = []
@@ -47,7 +48,6 @@ class VirtualMachine:
         return self.d_stack.pop()
 
     def push_value(self, value: Value):
-        print(f'stack size={len(self.d_stack)}')
         self.d_stack.append(value)
 
     def interpret(self, source: str) -> InterpretResult:
@@ -75,6 +75,13 @@ class VirtualMachine:
                 case Opcode.OP_CONSTANT:
                     constant = self.read_constant()
                     self.push_value(constant)
+                case Opcode.OP_DEFINE_GLOBAL:
+                    value = self.pop_value()
+                    const = self.pop_value()
+                    self.GLOBALS[const] = value
+                case Opcode.OP_GET_GLOBAL:
+                    const = self.pop_value()
+                    self.push_value(self.GLOBALS[const])
                 case Opcode.OP_ADD:
                     self.binary_op(lambda a, b: a + b)
                 case Opcode.OP_SUBTRACT:
@@ -86,9 +93,10 @@ class VirtualMachine:
                 case Opcode.OP_NEGATE:
                     # TODO replace in place ?
                     self.push_value(-self.pop_value())
-                case Opcode.OP_RETURN:
+                case Opcode.OP_PRINT:
                     print_value(self.pop_value())
                     print()
+                case Opcode.OP_RETURN:
                     return InterpretResult.INTERPRET_OK
                 case _:
                     return InterpretResult.INTERPRET_RUNTIME_ERROR

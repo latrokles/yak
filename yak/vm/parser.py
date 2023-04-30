@@ -84,5 +84,14 @@ class Parser:
             case 'neg':
                 self.compiler.emit_byte(Opcode.OP_NEGATE, self.scanner.row)
                 return token.text
+            case 'print':
+                self.compiler.emit_byte(Opcode.OP_PRINT, self.scanner.row)
+                return token.text
+            case 'set-global':
+                self.compiler.emit_byte(Opcode.OP_DEFINE_GLOBAL, self.scanner.row)
+                return token.text
+            case 'get-global':
+                self.compiler.emit_byte(Opcode.OP_GET_GLOBAL, self.scanner.row)
+                return token.text
             case _:
                 raise ParseError(f'Unknown word={token.text}')

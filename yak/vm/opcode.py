@@ -1,10 +1,13 @@
+from enum import IntEnum, auto
 
-
-class Opcode:
-    OP_CONSTANT = 0x00
-    OP_ADD      = 0x01
-    OP_SUBTRACT = 0x02
-    OP_MULTIPLY = 0x03
-    OP_DIVIDE   = 0x04
-    OP_NEGATE   = 0x05
-    OP_RETURN   = 0x06
+class Opcode(IntEnum):
+    OP_CONSTANT      = 0x00
+    OP_DEFINE_GLOBAL = auto()
+    OP_GET_GLOBAL    = auto()
+    OP_ADD           = auto()
+    OP_SUBTRACT      = auto()
+    OP_MULTIPLY      = auto()
+    OP_DIVIDE        = auto()
+    OP_NEGATE        = auto()
+    OP_PRINT         = auto()
+    OP_RETURN        = auto()
