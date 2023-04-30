@@ -47,6 +47,7 @@ class VirtualMachine:
         return self.d_stack.pop()
 
     def push_value(self, value: Value):
+        print(f'stack size={len(self.d_stack)}')
         self.d_stack.append(value)
 
     def interpret(self, source: str) -> InterpretResult:

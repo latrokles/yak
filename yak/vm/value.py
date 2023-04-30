@@ -1,6 +1,6 @@
 
 
-Value = int | float
+Value = int | float | str
 
 
 def print_value(val: Value) -> None:
