@@ -84,6 +84,21 @@ class Parser:
             case 'neg':
                 self.compiler.emit_byte(Opcode.OP_NEGATE, self.scanner.row)
                 return token.text
+            case '=':
+                self.compiler.emit_byte(Opcode.EQUAL, self.scanner.row)
+                return token.text
+            case '>':
+                self.compiler.emit_byte(Opcode.GREATER, self.scanner.row)
+                return token.text
+            case '>=':
+                self.compiler.emit_byte(Opcode.GREATER_THAN, self.scanner.row)
+                return token.text
+            case '<':
+                self.compiler.emit_byte(Opcode.LESS, self.scanner.row)
+                return token.text
+            case '<=':
+                self.compiler.emit_byte(Opcode.LESS_THAN, self.scanner.row)
+                return token.text
             case 'print':
                 self.compiler.emit_byte(Opcode.OP_PRINT, self.scanner.row)
                 return token.text

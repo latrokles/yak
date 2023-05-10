@@ -41,6 +41,16 @@ def disassemble_instruction(chunk: Chunk, offset: int) -> int:
             return simple_instruction('OP_DIVIDE', offset)
         case Opcode.OP_NEGATE:
             return simple_instruction('OP_NEGATE', offset)
+        case Opcode.OP_EQUAL:
+            return simple_instruction('OP_EQUAL', offset)
+        case Opcode.OP_GREATER:
+            return simple_instruction('OP_GREATER', offset)
+        case Opcode.OP_GREATER_EQUAL:
+            return simple_instruction('OP_GREATER_EQUAL', offset)
+        case Opcode.OP_LESS:
+            return simple_instruction('OP_LESS', offset)
+        case Opcode.OP_LESS_EQUAL:
+            return simple_instruction('OP_LESS_EQUAL', offset)
         case Opcode.OP_PRINT:
             return simple_instruction('OP_PRINT', offset)
         case Opcode.OP_RETURN:
