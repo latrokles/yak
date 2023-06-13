@@ -1,0 +1,90 @@
+IN: examples.basics
+
+'''
+data types
+'''
+
+# integers
+1
+1_000
+
+# floats
+2.5
+3_000.50
+
+# strings
+"this is a string"
+
+# booleans
+t
+f
+
+# nil
+nil
+
+# date
+d:2023-06-12
+
+# datetime
+dt:2023-05-25T05:51:59.507975+00:00
+
+# lists
+L{ 1 2 3 4 5 }
+
+# tuples
+T{ 1 2 3 4 }
+
+# dictionaries
+D{ "name" "bob" "age" 9 }
+
+# objects
+
+# defining a class
+class: todo key 
+            title 
+	    state 
+	    opened-on 
+	    closed-on ;
+
+# instantiating object
+
+# by calling `make`
+"key1" "do thing" "open" now nil todo make
+
+# manually
+todo new
+"key1" >>key
+"do thing" >>title
+"open" >>state
+now >>opened-on
+
+# creating a python objects
+"bob" 80 2 "Person" ffi:new
+"bob" 80 2 L{ "name" "bob" } "Person" ffi:new-kw
+
+# importing a python module
+"random" ffi:import
+"random" "randint" ffi:import-from
+
+# calling python function
+1 100 2 "randint" ffi:call
+
+# calling python function with kwargs
+1 100 2 L{ "start" "stop" } ffi:call-kw
+
+'''
+Control Flow.
+'''
+
+# conditionals
+
+? true-quot false-quot if-else
+? quot if      # prefer `when`
+? quot if-not  # prefer `unless`
+
+# looping
+
+# while (loop while condition)
+# until (loop until conidtion)
+# times (loop n times)
+# repeat (loop until explicit break)
