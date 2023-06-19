@@ -1,0 +1,144 @@
+#+TITLE: yak basics
+
+* comments
+- single line comments start with with a tilde ~#~
+- multiline comments are enclosed by two tildes `##`
+
+* primitives
+~yak~ supports integers, floats, booleans, strings, and nil.
+
+integers
+#+begin_src
+8
+9
+1_000_000
+#+end_src
+
+floats
+#+begin_src
+2.40
+3_000.14
+#+end_src
+
+booleans
+#+begin_src
+t
+f
+#+end_src
+
+strings
+#+begin_src
+"this is a string"
+#+end_src
+
+* collections
+`yak` supports tuples, lists, and dictionaries.
+
+tuples: immutable sequence of values
+#+begin_src
+{ 1 2 "Cassie" }
+#+end_src
+
+lists: mutable collections of values
+#+begin_src
+[ 1 2 t f "foo" ]
+#+end_src
+
+dictionaries: sequences of key/value pairs
+#+begin_src
+{ { "name" "bob" } { "age" 10 } }
+#+end_src
+
+* words
+words are operations on the stack, they are like functions.
+They are defined using the `:` word.
+
+a word has a name, a stack effect, and a definition.
+
+#+begin_src
+: product ( a b -- c ) * ;
+
+: square ( a b -- c ) dup * ;
+#+end_src
+
+* stack effects
+
+they describe the effects of a word on the stack, listing the values the word consumes
+off the stack and any values it puts on the stack, separated by `--`. The values are
+listed so that the rightmost value is the top of the stack.
+
+for example:
+#+begin_comment
+       produced
+          |
+consumed  |
+  / \    / \
+( a b -- c d )
+  ^ ^    ^ ^
+  | |    | |
+  | top  | |
+  |      | top
+ 2nd    2nd
+
+#+end_comment
+
+#+begin_src
+: swap ( a b -- b a ) ... ; # the stack effect shows that a and b are consumed
+                            # and then pushed back onto the stack in the reverse order.
+#+end_src
+
+* classes and objects
+
+~yak~ has support for used defined objects.
+
+** defining objects
+classes are defined with the `CLASS:` word followed by the name and the name of its slots (i.e. attributes).
+
+#+begin_src
+CLASS: todo title state opened_on closed_on ;
+#+end_src
+
+slots can have a default value if specified as a tuple.
+#+begin_src
+CLASS: todo title
+	    opened_on
+            { state "open" }
+	    { closed_on nil } ;
+#+end_src
+
+** creating objects
+a class can be instantiated "empty", that is with nil slots (except those with default values) by using the ~new~ word.
+
+#+begin_src
+todo new # will put `O{ todo nil nil "open" nil }` on the stack.
+#+end_src
+
+they can also be instantiated with boa (by order of arguments) constructors.
+#+begin_src
+: <todo> ( title opened_on state closed_on -- todo ) todo boa ;
+#+end_src
+
+** slot accessors
+accessors are words that allow to an object's slots. there are _reader words_ (~attr>>~) and _writer words_ (~>>attr~).
+
+#+begin_src
+"finish this syntax example" >>title # sets title on the todo object on top of the stack
+title>>                              # reads the title from todo on top of stack and pushes
+                                     # it onto the stack.
+#+end_src
+
+** methods
+methods are words that operate on an instance of a class
+
+#+begin_src
+METHOD: todo complete ( todo -- todo ) "closed" >>state
+#+end_src
+
+** object persistence
+by default objects are persistent objects and are stored in the program's runtime, each object is given a unique id automatically and can be queried and loaded back.
+
+- ~query~: takes a class and a predicate word and will push a list of all instances of the class that for which the predicate is ~t~.
+- ~get~: takes a class and an id and pushes the object with that id onto the stack.
+- ~all~: takes a class and pushes a list with all instances of the class onto the stack.
+- ~new-t~: instantiates an object as transient, meaning it's not persisted and is only kept as long as the object is on the stack.
+- ~boa-t~: instantiates an object by order of arguments as a transient instance.

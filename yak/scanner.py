@@ -1,3 +1,14 @@
+from dataclasses import dataclass, field
+from io import StringIO
+
+from yak.core import YakError, YakPrimitive
+
+
+def blank(s: str) -> bool:
+    """Return True if `s` is a blank string, False otherwise."""
+    return s == '' or s.isspace()
+
+
 class ScanError(YakError):
     """Raised whenever an error is encountered during scanning."""
 
@@ -10,24 +21,17 @@ class Token(YakPrimitive):
     row: int
 
 
-@dataclass
-class Scanner:
+class Scanner(YakPrimitive):
     """
     The Scanner consumes source text and splits it into space delimited tokens.
     """
+    def __init__(self, src: str):
+        self.src = StringIO(src)
+        self.src_len = len(src)
 
-    src_txt: InitVar[str]
-    src: StringIO = field(init=False)
-    src_len: int = field(init=False)
-
-    row: int = 0
-    col: int = 0
-    pos: int = 0
-
-    def __post_init__(self, src_txt: str):
-        """Initialize source stream."""
-        self.src = StringIO(src_txt)
-        self.src_len = len(src_txt)
+        self.row = 0
+        self.col = 0
+        self.pos = 0
 
     def scan_token(self) -> Token|None:
         """
