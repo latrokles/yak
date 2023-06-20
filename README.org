@@ -1,0 +1,25 @@
+#+TITLE: yak - joyfully wasting my time
+
+#+begin_warning
+*Warning*
+
+*THERE'S NOTHING OF PRACTICAL USE HERE... IT MAY EVEN BE WRONG, BEWARE!*
+#+end_warning
+
+Experiments, tools, and a bit of code for things I'm trying to learn.
+
+
+* Development
+
+** Setting up
+
+#+begin_src shell
+git clone https://github.com/latrokles/yak.git
+pip install -e .[test]
+#+end_src
+
+** Running tests
+
+#+begin_src shell
+pytest
+#+end_src
