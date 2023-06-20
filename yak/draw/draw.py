@@ -1,8 +1,8 @@
 import math
 
-from yak.color import Color
-from yak.fb import Framebuffer
-from yak.geometry import Point
+from yak.draw.color import Color
+from yak.draw.fb import Framebuffer
+from yak.draw.geometry import Point
 
 
 def draw_point(fb: Framebuffer, x: int, y: int, color: Color):
@@ -90,7 +90,7 @@ def draw_polygon(fb: Framebuffer, points: list[Point], color: Color) -> None:
 
 def draw_triangle(fb: Framebuffer, x0: int, y0: int, x1: int, y1: int, x2: int, y2: int, color: Color) -> None:
     draw_polygon(fb, [Point(x0, y0), Point(x1, y1), Point(x2, y2)], color)
-    
+
 
 def fill_rect(fb: Framebuffer, x: int, y: int, w: int, h: int, color: Color) -> None:
     for y0 in range(y, y + h):

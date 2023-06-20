@@ -2,7 +2,7 @@ import ctypes
 
 from dataclasses import dataclass, field
 
-from yak.color import Color, ColorFmt
+from yak.draw.color import Color, ColorFmt
 
 
 @dataclass
@@ -44,7 +44,7 @@ class Framebuffer:
 
         if (y <0) or (y >= self.h):
             raise RuntimeError(f'y={y} is out of framebuffer bounds')
-            
+
         pixel_0 = (y * (self.w * self.depth)) + (x * self.depth)
         pixel_n = (pixel_0 + self.depth)
 
@@ -77,4 +77,4 @@ class Framebuffer:
         self.mem[pixel_0:pixel_n] = color.to_values(self.fmt)
 
     def clear(self):
-        self.mem = bytearray(self.w * self.h * self.depth)    
+        self.mem = bytearray(self.w * self.h * self.depth)

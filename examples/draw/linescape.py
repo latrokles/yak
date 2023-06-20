@@ -1,8 +1,8 @@
 from dataclasses import dataclass
 
-from yak.color import Palette
-from yak.draw import background, draw_line, draw_rect
-from yak.sketch import Sketch
+from yak.draw.color import Palette
+from yak.draw.draw import background, draw_line, draw_rect
+from yak.draw.sketch import Sketch
 
 
 @dataclass
@@ -21,7 +21,7 @@ class Linescape(Sketch):
 
         startx, starty = 20, 20
         endx, endy = self.width - 20, self.height - 20
-        
+
         x0, y0 = startx, starty
         x1, y1 = startx, endy
 

@@ -1,8 +1,8 @@
 from dataclasses import dataclass, field
 
-from yak.color import Color, Palette
-from yak.draw import background, draw_point
-from yak.sketch import Sketch
+from yak.draw.color import Color, Palette
+from yak.draw.draw import background, draw_point
+from yak.draw.sketch import Sketch
 
 
 @dataclass
