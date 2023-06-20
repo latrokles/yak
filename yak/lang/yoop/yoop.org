@@ -1,0 +1,36 @@
+#+TITLE: yoop
+
+musings on an object oriented language with some smalltalk, some lisp, and something else... not necessarily any of the good parts tho.
+
+#+begin_src
+class todo
+  :description
+  :state
+  :opened_on
+  :closed_on
+end
+
+method closed? (t todo)
+  t state>> equal to: "closed" .
+end
+
+method close (t todo) on: dt
+  t <<state "closed" .
+  t <<closed_on dt .
+end
+
+method close (t todo)
+  t complete on: now .
+end
+
+method re-open (t todo)
+  t closed? if-false [
+    t <<state "open" .
+    t <<closed_on nil .
+  ]
+end
+
+method print-object (t todo) in: stream
+  stream write (t fmt) .
+end
+#+end_src
