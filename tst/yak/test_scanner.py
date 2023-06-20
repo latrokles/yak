@@ -1,6 +1,6 @@
 import pytest
 
-from yak.parsing import Scanner, ScanError, Token
+from yak.scanner import Scanner, ScanError, Token
 
 
 def new_scanner(source: str) -> Scanner:
