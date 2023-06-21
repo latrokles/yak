@@ -1,14 +1,13 @@
 import pytest
 
-from yak.scanner import Scanner, ScanError, Token
+from yak.yak.scanner import Scanner, ScanError, Token
 
-
-def new_scanner(source: str) -> Scanner:
+@pytest.fixture
+def scanner(source: str) -> Scanner:
     return Scanner(source)
 
-
-def test_scan_char_returns_current_char():
-    scanner = new_scanner('this')
+@pytest.mark.parametrize('source', ['this'])
+def test_scan_char_returns_current_char(scanner):
     c = scanner.scan_char()
     assert c == 't'
     assert 0 == scanner.row
@@ -16,38 +15,38 @@ def test_scan_char_returns_current_char():
     assert 1 == scanner.pos
 
 
-def test_scan_char_returns_current_char_handles_new_lines():
-    scanner = new_scanner('\nthis')
+@pytest.mark.parametrize('source', ['\nthis'])
+def test_scan_char_returns_current_char_handles_new_lines(scanner):
     c = scanner.scan_char()
     assert 1 == scanner.row
     assert 0 == scanner.col
     assert 1 == scanner.pos
 
 
-def test_scan_token_scans_space_delimited_token():
-    scanner = new_scanner(' add 1')
+@pytest.mark.parametrize('source', [' add 1'])
+def test_scan_token_scans_space_delimited_token(scanner):
     token = scanner.scan_token()
     assert token is not None
     assert token == Token('add', 2, 5, 0)
 
 
-def test_scan_token_scans_string_token():
-    source = '"this is a string"'
-    scanner = new_scanner(source)
+@pytest.mark.parametrize('source', ['"this is a string"'])
+def test_scan_token_scans_string_token(scanner):
     token = scanner.scan_token()
     assert token == Token(source, 1, 18, 0)
 
 
-def test_scan_token_returns_none_at_end_of_the_stream():
-    source = ''
-    assert new_scanner('').scan_token() is None
+@pytest.mark.parametrize('source', [''])
+def test_scan_token_returns_none_at_end_of_the_stream(scanner):
+    assert scanner.scan_token() is None
 
 
-def test_scan_token_returns_none_for_empty_source_text():
-    source = '       '
-    assert new_scanner('').scan_token() is None
+@pytest.mark.parametrize('source', ['       '])
+def test_scan_token_returns_none_for_empty_source_text(scanner):
+    assert scanner.scan_token() is None
 
 
-def test_scan_token_raises_scanner_error_on_scanning_errors():
+@pytest.mark.parametrize('source', ['"this'])
+def test_scan_token_raises_scanner_error_on_scanning_errors(scanner):
     with pytest.raises(ScanError):
-        new_scanner('"this').scan_token()
+        scanner.scan_token()

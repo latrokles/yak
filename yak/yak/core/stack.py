@@ -2,8 +2,14 @@ from dataclasses import dataclass, field
 
 from yak.yak.core import YakError, YakPrimitive, YakVal
 
+class UnderflowError(YakError):
+    """Raised when stack doesn't have enough values."""
+
+
 @dataclass
 class Stack(YakPrimitive):
+    """The core data structure in yak."""
+
     values: list[YakVal] = field(default_factory=list)
 
     @property

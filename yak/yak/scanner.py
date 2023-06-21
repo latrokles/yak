@@ -1,7 +1,7 @@
 from dataclasses import dataclass, field
 from io import StringIO
 
-from yak.core import YakError, YakPrimitive
+from yak.yak.core import YakError, YakPrimitive
 
 
 def blank(s: str) -> bool:

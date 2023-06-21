@@ -1,7 +1,6 @@
 import pytest
 
-from yak.primitives import Value
-from yak.primitives.stack import Stack, StackUnderflowError
+from yak.core import Stack, UnderflowError, YakVal
 
 
 @pytest.fixture

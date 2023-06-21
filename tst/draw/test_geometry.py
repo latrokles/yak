@@ -1,4 +1,4 @@
-from yak.geometry import Point, Rectangle
+from yak.draw.geometry import Point, Rectangle
 
 # gonna be a bit lazy here by testing in logical groupings
 # I'm glad the blue book has a few examples to use as test cases.
