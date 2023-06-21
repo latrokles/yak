@@ -1,6 +1,6 @@
 import pytest
 
-from yak.yak.scanner import Scanner, ScanError, Token
+from yak.yak import Scanner, ScanError, Token
 
 @pytest.fixture
 def scanner(source: str) -> Scanner:
@@ -33,7 +33,7 @@ def test_scan_token_scans_space_delimited_token(scanner):
 @pytest.mark.parametrize('source', ['"this is a string"'])
 def test_scan_token_scans_string_token(scanner):
     token = scanner.scan_token()
-    assert token == Token(source, 1, 18, 0)
+    assert token == Token('"this is a string"', 1, 18, 0)
 
 
 @pytest.mark.parametrize('source', [''])
@@ -42,8 +42,8 @@ def test_scan_token_returns_none_at_end_of_the_stream(scanner):
 
 
 @pytest.mark.parametrize('source', ['       '])
-def test_scan_token_returns_none_for_empty_source_text(scanner):
-    assert scanner.scan_token() is None
+def test_scan_token_returns_null_token_for_empty_source_text(scanner):
+    assert scanner.scan_token().null() is True
 
 
 @pytest.mark.parametrize('source', ['"this'])

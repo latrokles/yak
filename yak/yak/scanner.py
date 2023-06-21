@@ -20,14 +20,17 @@ class Token(YakPrimitive):
     col_end: int
     row: int
 
+    def null(self) -> bool:
+        return self.text == ''
+
 
 class Scanner(YakPrimitive):
     """
     The Scanner consumes source text and splits it into space delimited tokens.
     """
-    def __init__(self, src: str):
-        self.src = StringIO(src)
-        self.src_len = len(src)
+    def __init__(self, src_txt: str):
+        self.src = StringIO(src_txt)
+        self.src_len = len(src_txt)
 
         self.row = 0
         self.col = 0
@@ -48,7 +51,7 @@ class Scanner(YakPrimitive):
         token_chars = []
         char = self.scan_char()
 
-        while blank(char):
+        while blank(char) and self.pos < self.src_len:
             char = self.scan_char()
 
         start = self.col

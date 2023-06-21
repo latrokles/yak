@@ -17,11 +17,11 @@ class Stack(YakPrimitive):
         return len(self.values)
 
     def peek(self) -> YakVal:
-        self._ensure(1)
+        self.ensure(1)
         return self.values[-1]
 
     def pop(self) -> YakVal:
-        self._ensure(1)
+        self.ensure(1)
         return self.values.pop()
 
     def push(self, val: YakVal) -> None:
@@ -30,10 +30,10 @@ class Stack(YakPrimitive):
     def push_all(self, vals: list[YakVal]):
         self.values.extend(vals)
 
-    def is_empty(self) -> bool:
-        self.count == 0
+    def empty(self) -> bool:
+        return self.count == 0
 
-    def is_not_empty(self) -> bool:
+    def not_empty(self) -> bool:
         return not self.empty()
 
     def clear(self):
@@ -42,7 +42,7 @@ class Stack(YakPrimitive):
     def fmt(self) -> str:
         pass
 
-    def _ensure(self, count: int):
+    def ensure(self, count: int):
         if count <= self.count:
             return
 
