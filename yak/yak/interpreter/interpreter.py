@@ -2,10 +2,12 @@ from __future__ import annotations
 from dataclasses import dataclass
 from traceback import print_exc
 
+from yak.yak.core import Stack
+
 
 @dataclass
 class CallFrame:
-    code: Quotation = field(default_factory=Quotation)
+    code: list = field(default_factory=list)
     ip: int = 0
 
     def next(self) -> Value:
@@ -22,8 +24,6 @@ class CallFrame:
 
 @dataclass
 class NullCallFrame(CallFrame):
-    code: Quotation = Quotation()
-
     def empty(self) -> bool:
         return True
 
