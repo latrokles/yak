@@ -64,7 +64,7 @@ class Point:
 
     def __abs__(self) -> Point:
         return Point(abs(self.x), abs(self.y))
-        
+
     def __arithmetic_op(self, arg: int|Point, op: Callable) -> Point:
         match arg:
             case int()|float():
@@ -134,7 +134,7 @@ class Rectangle:
         # - recompute origin ?
         # - raise error to avoid degenerate triangle?
         origin = Point(x, y)
-        return Rectangle(origin, origin + Point(width, height)) 
+        return Rectangle(origin, origin + Point(width, height))
 
     # properties
     @property
@@ -164,7 +164,7 @@ class Rectangle:
     @property
     def left(self) -> int|float:
         return self.origin.x
-    
+
     @property
     def center(self) -> Point:
         return (self.origin + self.corner) // 2
@@ -200,3 +200,7 @@ class Rectangle:
     @property
     def left_center(self) -> Point:
         return Point(self.left, self.center.y)
+
+    # methods
+    def contains_point(self, point: Point) -> bool:
+        return (self.origin <= point) and (point < self.corner)
