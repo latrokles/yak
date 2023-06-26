@@ -137,13 +137,38 @@ class Rectangle:
         return Rectangle(origin, origin + Point(width, height))
 
     # properties
+
+    @property
+    def x(self) -> int:
+        return self.origin.x
+
+    @property.setter
+    def x(self, val: int):
+        self.origin.x = vals
+
+    @property
+    def y(self) -> int:
+        return self.origin.y
+
+    @property.setter
+    def y(self, val: int):
+        self.origin.y = y
+
     @property
     def width(self) -> int|float:
         return self.corner.x - self.origin.x
 
+    @property.setter
+    def width(self, val: int):
+        self.corner = Point(self.origin.x + val, self.corner.y)
+
     @property
     def height(self) -> int|float:
         return self.corner.y - self.origin.y
+
+    @property.setter
+    def height(self, value: int):
+        self.corner = Point(self.corner.x, self.origin.y + val)
 
     @property
     def extent(self) -> Point:
@@ -204,3 +229,12 @@ class Rectangle:
     # methods
     def contains_point(self, point: Point) -> bool:
         return (self.origin <= point) and (point < self.corner)
+
+    def add_width(self, amount: int):
+        self.corner = Point(self.corner.x + width, self.corner.y)
+
+    def add_height(self, amount: int):
+        self.corner = Point(self.corner.x, self.corner.y + amount)
+
+    def set_width(self, width: int):
+        self.corner = Point(self.origin.x + width, self.corner.y)
