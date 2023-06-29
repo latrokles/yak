@@ -5,7 +5,7 @@ import sdl2
 
 from dataclasses import dataclass
 
-from .draw.color import ColorFmt, Palette
+from .draw.color import ColorFmt
 from .draw.form import Form
 
 
@@ -27,12 +27,13 @@ class MachineError(Exception):
 
 
 class Machine:
-    def __init__(self, width, height, scale, color_format, server_opts):
+    def __init__(self, width, height, scale, color_format, server_opts, interpreter_factory):
         self.w = width * scale
         self.h = height * scale
         self.scale = scale
         self.screen = Form(0, 0, width, height, color_format)
         self.server = EvalServer(self, server_opts)
+        self.interpreter = interpreter_factory(self)
 
         self.running = False
         self.exit_signalled = False
@@ -96,15 +97,7 @@ class Machine:
         self.stop()
 
     def evaluate(self, expression):
-        match expression:
-            case 'fill-random':
-                self.screen.fill(Palette.random())
-                return 'ok!'
-            case 'exit':
-                self.exit_signalled = True
-                return 'bye!'
-            case _:
-                return f'cannot evaluate expression: `{expression}`'
+        return self.interpreter.interpret(expression)
 
     def _handle_events(self):
         event = sdl2.SDL_Event()
@@ -155,7 +148,7 @@ class EvalServer:
         return {'result': evaluation_response}
 
 
-def launch():
+def launch(interpreter_factory):
     server_opts = EvalServerOpts('localhost', 45133)
-    machine = Machine(320, 240, 2, ColorFmt.RGBA, server_opts)
+    machine = Machine(320, 240, 2, ColorFmt.RGBA, server_opts, interpreter_factory)
     machine.start()
