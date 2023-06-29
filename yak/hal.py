@@ -1,6 +1,9 @@
-import bottle
-import sdl2
 import threading
+
+import flask
+import sdl2
+
+from dataclasses import dataclass
 
 from .draw.color import ColorFmt, Palette
 from .draw.form import Form
@@ -24,13 +27,12 @@ class MachineError(Exception):
 
 
 class Machine:
-    def __init__(self, width, height, scale, color_format, command_server):
+    def __init__(self, width, height, scale, color_format, server_opts):
         self.w = width * scale
         self.h = height * scale
         self.scale = scale
         self.screen = Form(0, 0, width, height, color_format)
-        self.server = command_server
-        self.server.register_runtime(self)
+        self.server = EvalServer(self, server_opts)
 
         self.running = False
         self.exit_signalled = False
@@ -71,7 +73,7 @@ class Machine:
         self.run()
 
     def start_server(self):
-        server_thread = threading.Thread(target=self.server.start)
+        server_thread = threading.Thread(target=self.server.start, daemon=True)
         server_thread.start()
 
     def stop(self):
@@ -92,6 +94,17 @@ class Machine:
 
             self._redisplay()
         self.stop()
+
+    def evaluate(self, expression):
+        match expression:
+            case 'fill-random':
+                self.screen.fill(Palette.random())
+                return 'ok!'
+            case 'exit':
+                self.exit_signalled = True
+                return 'bye!'
+            case _:
+                return f'cannot evaluate expression: `{expression}`'
 
     def _handle_events(self):
         event = sdl2.SDL_Event()
@@ -114,40 +127,35 @@ class Machine:
             self.exit_signalled = True
             return
 
-class CommandServer:
-    def __init__(self, host, port):
-        self.host = host
-        self.port = port
-        self._http = bottle.Bottle()
-        self._set_up_routes()
 
-    def register_runtime(self, machine):
+@dataclass
+class EvalServerOpts:
+    host: str
+    port: int
+
+
+class EvalServer:
+    def __init__(self, machine, opts):
         self.machine = machine
+        self.host = opts.host
+        self.port = opts.port
+        self._http = flask.Flask(__name__)
+        self._set_up_routes()
 
     def start(self):
         self._http.run(host=self.host, port=self.port)
 
-    def stop(self):
-        self._http.close()
-
     def _set_up_routes(self):
-        self._http.route('/exec', method="POST", callback=self._execute)
+        self._http.add_url_rule('/evaluate', 'evaluate', self._evaluate, methods=['POST'])
 
-    def _execute(self):
-        request_dict = bottle.request.json
-        cmd = request_dict.get('cmd', '')
-        match cmd:
-            case 'random-fill':
-                color = Palette.random()
-                self.machine.screen.fill(color)
-            case 'signal-exit':
-                self.machine.exit_signalled = True
-                self.stop()
-            case _:
-                print(f'invalid command: `{cmd}`')
+    def _evaluate(self):
+        request_dict = flask.request.json
+        expression = request_dict.get('expression', '')
+        evaluation_response = self.machine.evaluate(expression)
+        return {'result': evaluation_response}
 
 
 def launch():
-    server = CommandServer('localhost', 45133)
-    machine = Machine(320, 240, 2, ColorFmt.RGBA, server)
+    server_opts = EvalServerOpts('localhost', 45133)
+    machine = Machine(320, 240, 2, ColorFmt.RGBA, server_opts)
     machine.start()
