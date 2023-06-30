@@ -39,6 +39,23 @@ class Form:
         _0th, _nth = self._pixel_bytes_range_at_point(x, y)
         self.bitmap[_0th:_nth] = color.to_values(self.color_format)
 
+    def row_bytes(self, x, y, pixel_count):
+        print(f'reading `{pixel_count}` pixels in row `{y}` starting in col `{x}`')
+        if x + (pixel_count - 1) >= self.w:
+            raise OutOfBoundsError(f'reading beyond bitmap width. start={x}, pixels={pixel_count}, bitmap width={self.w}')
+
+        byte_0 = (y * (self.w * self.depth)) + (x * self.depth)
+        byte_n = byte_0 + (self.depth * (pixel_count - 1))
+        return self.bitmap[byte_0:byte_n]
+
+    def put_row_bytes(self, x, y, row_bytes):
+        if x + ((len(row_bytes) - 1) / self.depth) >= self.w:
+            raise OutOfBoundsError(f'writing beyond bitmap width. start={x}, pixel_count={len(row_bytes) / self.depth}')
+
+        byte_0 = (y * (self.w * self.depth)) + (x * self.depth)
+        byte_n = byte_0 + len(row_bytes)
+        self.bitmap[byte_0:byte_n] = row_bytes
+
     def fill(self, color):
         self.bitmap = bytearray(self.w * self.h * color.to_values(self.color_format))
 

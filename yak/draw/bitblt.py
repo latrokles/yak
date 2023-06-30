@@ -6,38 +6,10 @@ from dataclasses import dataclass
 from enum import IntEnum, auto
 
 from .color import Color
-from .geometry import Rectangle
 
-"""
-Exploring some of smalltalk's graphics primitives here
-"""
-        bitblt = BitBlt(
-            destination=medium,
-            source=self,
-            fill=fill,
-            combination_rule=rule,
-            destination_origin=at,
-            source_origin=self.rect.origin,
-            extent=self.rect.corner,
-            clipping_rect=clipping_rect
-        )
-        bitblt.copy_bits()
+"""Exploring some of smalltalk's graphics primitives here"""
 
-    def fill(self, color: Color) -> None:
-        self.bitmap = bytearray(self.width * self.height * self.width * color.to_values)
-
-    def _pixel_bytes_range_at_point(self, point: Point) -> tuple[int,int]:
-        if not self.rect.contains_point(point):
-            raise OutOfBoundsError(f'{point} is out of bounds of {self}')
-
-        byte_0 = (point.y * (self.width * self.depth)) + (point.x * self.depth)
-        byte_n = byte_0 + self.depth
-        return byte_0, byte_n
-
-
-
-
-class CombinationRule(Enum):
+class CombinationRule(IntEnum):
     ALL_ZEROS                            = 0
     SOURCE_AND_DESTINATION               = 1
     SOURCE_AND_DESTINATION_INVERT        = 2
@@ -56,77 +28,98 @@ class CombinationRule(Enum):
     ALL_ONES                             = 15
 
 
+class BitBltError(Exception):
+    """Raised for an issue trying to execute a bitblt operation."""
+
+
 @dataclass
 class BitBlt:
     destination: Form
     source: Form
     fill: Color
     combination_rule: CombinationRule
-    destination_origin: Point
-    source_origin: Point
-    extent: Rectangle
-    clipping_rect: Rectangle|None = None
+    destination_x: int
+    destination_y: int
+    source_x: int
+    source_y: int
+    width: int
+    height: int
+    clip_x: int = 0
+    clip_y: int = 0
+    clip_w: int|None = None
+    clip_h: int|None = None
 
     def __post_init__(self):
-        self.clipping_rect = (self.clipping_rect or self.destination.rect)
+        if self.destination.depth != self.source.depth:
+            raise BitBltError(
+                f'There is no support for forms with different color formats. source={self.source.color_format}, destination={self.destination.color_format}'
+            )
+
+        self.clip_w = (self.clip_w or self.destination.w)
+        self.clip_h = (self.clip_h or self.destination.h)
 
         self.vertical_direction = 0
         self.horizontal_direction = 0
 
-    def draw_from_to(self):
-        pass
+    def draw_line(self, from_x, from_y, to_x, to_y):
+        # TODO implement
+        ...
 
-    def draw_loop(self):
-        pass
+    def draw_loop_xy(self, x_delta, y_delta):
+        # TODO implement
+        ...
 
     def copy_bits(self):
         self.clip_range()
-        self.compute_masks()
         self.check_overlap()
-        self.calculate_offsets()
         self.copy_loop()
 
     def clip_range(self):
-        if self.clipping_rect.origin.x < 0:
-            self.clipping_rect.add_width(self.clipping_rect.origin.x)
-            self.clipping_rect.origin.x = 0
+        # if clipping rectangle is outside the destination image (left)
+        # we discard the region to the left of the destination
+        if self.clip_x < 0:
+            self.clip_w += self.clip_x
+            self.clip_x = 0
 
-        if self.clipping_rect.origin.y < 0:
-            self.clipping_rect.add_height(self.clipping_rect.origin.y)
-            self.clipping_rect.origin.y = 0
+        # if the clipping rectangle is outside destination image (top)
+        # we discard the the region above the top of destination.
+        if self.clip_y < 0:
+            self.clip_h += self.clip_y
+            self.clip_y = 0
 
-        if self.clipping_rect.corner.x > self.destination.rect.x:
-            self.clipping_rect.add_width(self.destination.rect.extent.x - self.clipping_rect.origin.x)
+        # we do the same as above, but for right and bottom
+        if self.clip_x + self.clip_w > self.destination.w:
+            self.clip_w = self.destination.w - self.clip_x
 
-        if self.clipping_rect.corner.y > self.destination.rect.y:
-            self.clipping_rect.add_height(self.destination.rect.extent.y - self.clipping_rect.origin.y)
+        if self.clip_y + self.clip_h > self.destination.h:
+            self.clip_h = self.destination.h - self.clip_y
 
         ## clip and adjust source origing and extent
         # in X
-        if self.destination.rect.origin.x > self.clipping_rect.origin.x:
-            self.sx = self.source.x
-            self.dx = self.destination.x
-            self.w = self.extent.x
+        if self.destination_x >= self.clip_x:
+            self.sx = self.source_x
+            self.dx = self.destination_x
+            self.w  = self.width
         else:
-            self.sx = self.source.x + (self.clipping_rect.x - self.destination.x)
-            self.w = self.extent.x - (self.clipping_rect.x - self.destination.x)
-            self.dx = self.clipping_rect.x
+            self.sx = self.source_x + (self.clip_x - self.destination_x)
+            self.w  = self.width - (self.clip_x - self.destination_x)
+            self.dx = self.clip_x
 
-        if (self.dx + self.w) > (self.clipping_rect.x + self.clipping_rect.width):
-            self.w = self.w - ((self.dx - self.w) - (self.clipping_rect.x + self.clipping_rect.width))
+        if (self.dx + self.w) > (self.clip_x + self.clip_w):
+            self.w = self.w - ((self.dx - self.w) - (self.clip_x + self.clip_w))
 
         # in Y
-        if (self.destination.y >= self.clipping_rect.y):
-            self.sy = self.source.y
-            self.dy = self.destination.y
-            self.h = self.extent.y
+        if self.destination_y >= self.clip_y:
+            self.sy = self.source_y
+            self.dy = self.destination_y
+            self.h  = self.height
         else:
-            self.sy = self.source.y + self.clipping_rect.y - self.destination.y
-            self.h = self.extent.y - (self.clipping_rect.y - self.destination.y)
-            self.dy = self.clipping_rect.y
+            self.sy = self.source_y + (self.clip_y - self.destination_y)
+            self.h  = self.height - (self.clip_y - self.destination_y)
+            self.dy = self.clip_y
 
-        if (self.dy + self.h) > (self.clipping_rect.y + self.clipping_rect.height):
-            self.h = self.h - ((self.dy + self.h) - (self.clipping_rect.y + self.clipping_rect.height))
+        if (self.dy + self.h) > (self.clip_y + self.clip_h):
+            self.h = self.h - ((self.dy + self.h) - (self.clip_y + self.clip_h))
 
         if self.source is None:
             return
@@ -136,19 +129,16 @@ class BitBlt:
             self.w = self.w + self.sx
             self.sx = 0
 
-        if (self.sx + self.w) > self.source.width:
-            self.w = self.w - (self.sx + self.w - self.source.width)
+        if (self.sx + self.w) > self.source.w:
+            self.w = self.w - (self.sx + self.w - self.source.w)
 
         if self.sy < 0:
             self.dy = self.dy - self.sy
             self.h = self.h + self.sy
             self.sy = 0
 
-        if (self.sy + self.h) > self.source.height:
-            self.h = self.h - (self.sy + self.h - self.source.height)
-
-    def compute_masks(self):
-        pass
+        if (self.sy + self.h) > self.source.h:
+            self.h = self.h - (self.sy + self.h - self.source.h)
 
     def check_overlap(self):
         # set copying directions to defaults
@@ -177,11 +167,38 @@ class BitBlt:
             self.dx = self.dx + self.w - 1
         # data moving left:  copy starts from the left and move right (uses default hor dir)
 
-    def calculate_offsets(self):
-        pass
-
     def copy_loop(self):
-        pass
+        # TODO support copying data inside the same image using vertical and horizontal direction
+
+        # sx, sy, w, h
+        # dx, dy, w, h
+        sy_stop = self.sy + self.h
+        while self.sy < sy_stop:
+            self.merge()
+            self.sy += 1
+            self.dy += 1
+
+    def merge(self):
+        # TODO support other combination rules
+        # TODO support color attribute
+        source_bytes = self.source.row_bytes(self.sx, self.sy, self.w)
+        destination_bytes = self.destination.row_bytes(self.dx, self.dy, self.w)
+
+        match self.combination_rule:
+            case CombinationRule.ALL_ZEROS:
+                self.destination.put_row_bytes(self.dx, self.dy, bytes(len(destination_bytes)*[0x00]))
+            case CombinationRule.ALL_ONES:
+                self.destination.put_row_bytes(self.dx, self.dy, bytes(len(destination_bytes)*[0xff]))
+            case CombinationRule.SOURCE_ONLY:
+                self.destination.put_row_bytes(self.dx, self.dy, source_bytes)
+            case CombinationRule.SOURCE_INVERT:
+                result = (~int.from_bytes(source_bytes)).to_bytes(self.w * self.source.depth)
+                self.destination.put_row_bytes(self.dx, self.dy, result)
+            case CombinationRule.DESTINATION_INVERT:
+                result = (~int.from_bytes(destination_bytes)).to_bytes(self.w * self.destination.depth)
+                self.destination.put_row_bytes(self.dx, self.dy, result)
+            case _:
+                raise BitBltError(f'unsupported combination rule={self.combination_rule}')
 
     def _merge_pixel_bytes(self, source_bytes, destination_bytes) -> bytearray:
         if len(source_bytes) != len(destination_bytes):
