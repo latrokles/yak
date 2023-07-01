@@ -16,6 +16,8 @@ class Form:
     w: int
     h: int
     color_format: ColorFmt
+    offset_x: int|None = None
+    offset_y: int|None = None
     bitmap: bytearray|None = None
 
     def __post_init__(self):
@@ -25,6 +27,12 @@ class Form:
     @property
     def depth(self):
         return self.color_format.depth()
+
+    @property
+    def offset(self):
+        if self.offset_x is None and self.offset_y is None:
+            return (0, 0)
+        return (self.offset_x, self.offset_y)
 
     @property
     def bitmap_bytes(self):
@@ -40,7 +48,6 @@ class Form:
         self.bitmap[_0th:_nth] = color.to_values(self.color_format)
 
     def row_bytes(self, x, y, pixel_count):
-        print(f'reading `{pixel_count}` pixels in row `{y}` starting in col `{x}`')
         if x + (pixel_count - 1) >= self.w:
             raise OutOfBoundsError(f'reading beyond bitmap width. start={x}, pixels={pixel_count}, bitmap width={self.w}')
 

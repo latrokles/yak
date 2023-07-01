@@ -9,6 +9,15 @@ from .color import Color
 
 """Exploring some of smalltalk's graphics primitives here"""
 
+
+def sign(val):
+    if val > 0:
+        return 1
+    if val < 0:
+        return -1
+    return 0
+
+
 class CombinationRule(IntEnum):
     ALL_ZEROS                            = 0
     SOURCE_AND_DESTINATION               = 1
@@ -62,12 +71,61 @@ class BitBlt:
         self.horizontal_direction = 0
 
     def draw_line(self, from_x, from_y, to_x, to_y):
-        # TODO implement
-        ...
+        # draw down or left to right
+        # so we check both points and if from point is to the right
+        # we swap start and stop
+
+        print(f'drawing from ({from_x},{from_y}) to ({to_x},{to_y}')
+        is_forward = ((from_y == to_y) and (from_x < to_x)) or (from_y < to_y)
+        if not is_forward:
+            print('not forward, swaping points')
+            from_x, to_x = to_x, from_x
+            from_y, to_y = to_y, from_y
+
+        if self.source is None:
+            self.destination_x = from_x
+            self.destination_y = from_y
+        else:
+            self.width = self.source.w
+            self.height = self.source.h
+            offset_x, offset_y = self.source.offset
+            self.destination_x = from_x + offset_x
+            self.destination_y = from_y + offset_y
+
+        x_delta = to_x - from_x
+        y_delta = to_y - from_y
+        self.draw_loop_xy(x_delta, y_delta)
 
     def draw_loop_xy(self, x_delta, y_delta):
-        # TODO implement
-        ...
+        dx = sign(x_delta)
+        dy = sign(y_delta)
+        px = abs(y_delta)
+        py = abs(x_delta)
+
+        if py > px:
+            # more horizontal
+            p = py // 2
+            for i in range(1, py):
+                self.destination_x += dx
+                p = p - px
+                if p < 0:
+                    self.destination_y += dy
+                    p += py
+                if i < py:
+                    # print(f'drawing at x={self.destination_x},y={self.destination_y}')
+                    self.copy_bits()
+        else:
+            # more vertical
+            p = px // 2
+            for i in range(1, px):
+                self.destination_y += dy
+                p = p - py
+                if p < 0:
+                    self.destination_x += dx
+                    p += px
+                if i < px:
+                    # print(f'drawing at x={self.destination_x},y={self.destination_y}')
+                    self.copy_bits()
 
     def copy_bits(self):
         self.clip_range()

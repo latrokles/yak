@@ -42,7 +42,7 @@ class Machine:
         if sdl2.SDL_Init(sdl2.SDL_INIT_VIDEO) < 0:
             raise MachineError(f'Canot initialize SDL: {sdl2.SDL_Geterror()}')
 
-        window_opts = sdl2.SDL_WINDOW_RESIZABLE | sdl2.SDL_WINDOW_BORDERLESS
+        window_opts = sdl2.SDL_WINDOW_BORDERLESS
         self.window = sdl2.SDL_CreateWindow(
             ''.encode('utf-8'),
             sdl2.SDL_WINDOWPOS_UNDEFINED,
