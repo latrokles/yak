@@ -75,7 +75,7 @@ class BitBlt:
         # so we check both points and if from point is to the right
         # we swap start and stop
 
-        print(f'drawing from ({from_x},{from_y}) to ({to_x},{to_y}')
+        print(f'drawing from ({from_x},{from_y}) to ({to_x},{to_y})')
         is_forward = ((from_y == to_y) and (from_x < to_x)) or (from_y < to_y)
         if not is_forward:
             print('not forward, swaping points')
