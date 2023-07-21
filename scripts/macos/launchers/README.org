@@ -1,0 +1,17 @@
+* install launch agents
+
+* TODO roll this up into setup/install step
+
+#+begin_src shell
+AGENT=""
+
+set -u "s,YAK_PATHNAME,${PWD}," \
+       scripts/macos/launchers/${AGENT}/com.latrokles.yak.${AGENT}.plist \
+       > ~/Library/LaunchAgents/com.latrokles.yak.${AGENT}.plist
+
+# start agent
+launchctl load ~/Library/LaunchAgents/com.latrokles.yak.${AGENT}.plist
+
+# stop agent
+launchctl unload ~/Library/LaunchAgents/com.latrokles.yak.${AGENT}.plist
+#+end_src
