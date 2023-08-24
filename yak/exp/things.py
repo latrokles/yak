@@ -19,11 +19,46 @@ cat.()
 #   - fs backed triplet store?
 
 import nanoid
+import os
+import pathlib
 import pickle
+import re
 import time
 
 STORE_DIR = '/tmp/'
 
+
+class FileBackedStorage:
+    INSTANCE = None
+
+    def __init__(self, directory):
+        self.db = pathlib.Path(directory)
+
+    def read(self, uid):
+        pattern = f'.*-{uid}.p'
+        matching_files = [name for name in os.listdir(self.db) if re.match(pattern, name)]
+        return self._read_from_file(matching_files[0])
+
+    def find_all(self, tag):
+        pattern = f'{tag}-.*.p'
+        return [
+            self._read_from_file(name)
+            for name
+            in os.listdir(self.db)
+            if re.match(pattern)
+        ]
+
+    def _read_from_file(self, pathname):
+        instance_dict = pickle.load(pathname)
+
+    def write_to_file(self, pathname):
+        pass
+
+    @classmethod
+    def instance(cls, directory):
+        if cls.INSTANCE is None:
+            cls.INSTANCE = cls(directory)
+        return cls.INSTANCE
 
 class Things(type):
     def __new__(meta, name, bases, class_dict):
@@ -31,6 +66,7 @@ class Things(type):
 
     def __getattribute__(self, tag):
         return Record(tag)
+
 
 class Thing(metaclass=Things):
     pass
@@ -41,10 +77,11 @@ class Record:
         self.tag = tag
         self.slots = []
 
-    def new(self, **fields):
+    def new(self, **slots):
         self.uid = nanoid.generate()
-        self._initialize_fields(fields)
+        self._initialize_slots(slots)
         return self
+
 
     def all(self):
         # load all records with self.tag and return them as a list
@@ -66,20 +103,22 @@ class Record:
     def __repr__(self):
         def show(slot):
             value = getattr(self, slot)
-            return f'{slot}: {repr(value)}' 
+            return f'{slot}: {repr(value)}'
 
-        fields = ', '.join(show(slot) for slot in self.slots)
-        return f'{self.tag}.({fields})'
+        slots = ', '.join(show(slot) for slot in self.slots)
+        return f'{self.tag}.({slots})'
 
-    def _initialize_fields(self, fields):
-        for k, v in fields.items():
-            self.slots.append(k)
-            setattr(self, 'updated_at', int(time.time() * 1000))
-            setattr(self, k, v)
-            self._persist()
+    def _initialize_slots(self, slots):
+        for slot_name, slot_value in slots.items():
+            self._initialize_slot(name, value)
+
+    def _initialize_slot(self, name, value):
+        self.slots.append(name)
+        setattr(self, name, value)
+        setattr(self, 'updated_at', int(time.time() * 1000))
+        self._persist()
 
     def _persist(self):
-        pathname = f'{STORE_DIR}/{self.tag}-{self.uid}.p' 
+        pathname = f'{STORE_DIR}/{self.tag}-{self.uid}.p'
         with open(pathname, 'wb') as f:
             pickle.dump(self.__dict__, f)
-
