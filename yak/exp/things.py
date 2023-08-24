@@ -65,23 +65,19 @@ class Things(type):
         return type.__new__(meta, name, bases, class_dict)
 
     def __getattribute__(self, tag):
-        return Record(tag)
+        return RecordManager(tag)
 
 
 class Thing(metaclass=Things):
     pass
 
 
-class Record:
+class RecordManager:
     def __init__(self, tag):
         self.tag = tag
-        self.slots = []
 
-    def new(self, **slots):
-        self.uid = nanoid.generate()
-        self._initialize_slots(slots)
-        return self
-
+    def __call__(self, **slots):
+        return Record(uid, tag, **slots)
 
     def all(self):
         # load all records with self.tag and return them as a list
@@ -95,8 +91,16 @@ class Record:
         # return all records with self.tag that match query
         pass
 
+
+class Record:
+    def new(self, uid, tag, **slots):
+        self.uid = uid
+        self.tag = tag
+        self._initialize_slots(slots)
+        return self
+
     def __eq__(self, other):
-        if not isinstance(other, Thing):
+        if not isinstance(other, Record):
             return False
         return self.uid == other.uid
 
