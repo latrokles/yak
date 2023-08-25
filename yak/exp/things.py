@@ -8,20 +8,17 @@ cat.()
 """
 
 # TODO
-# - Thing.dog.all
-# - Thing.dog.find_one
-# - Thing.dog.find_many
-# - nested "Thing"(s) linked by reference
-# - replace pickle (json?)
 # - configurable store
+# - load store from config file
 #   - fs?
 #   - sqlite?
 #   - fs backed triplet store?
+# - circular references?
 
+import json
 import nanoid
 import os
 import pathlib
-import pickle
 import re
 import time
 
@@ -39,26 +36,45 @@ class FileBackedStorage:
         matching_files = [name for name in os.listdir(self.db) if re.match(pattern, name)]
         return self._read_from_file(matching_files[0])
 
+    def write(self, filename, serializable_slots):
+        pathname = self.db / filename
+        pathname.write_text(json.dumps(serializable_slots))
+
     def find_all(self, tag):
         pattern = f'{tag}-.*.p'
         return [
             self._read_from_file(name)
             for name
             in os.listdir(self.db)
-            if re.match(pattern)
+            if re.match(pattern, name)
         ]
 
-    def _read_from_file(self, pathname):
-        instance_dict = pickle.load(pathname)
+    def find_with_slots(self, tag, **slots):
+        all = self.find_all(tag)
+        return [thing for thing in all if thing.matches(**slots)]
 
-    def write_to_file(self, pathname):
-        pass
+    def _read_from_file(self, filename):
+        pathname = self.db / filename
+        loaded_data = json.loads(pathname.read_text())
+        slots = {}
+        for k, v in loaded_data.items():
+            slots[k] = v
+
+            if isinstance(v, str) and re.match('#ref#:', v):
+                uid = v.replace('#ref#:', '')
+                record = self.read(uid)
+                slots[k] = record
+        return Record(**slots)
 
     @classmethod
-    def instance(cls, directory):
+    def instance(cls, directory = None):
+        if directory is None:
+            directory = STORE_DIR
+
         if cls.INSTANCE is None:
             cls.INSTANCE = cls(directory)
         return cls.INSTANCE
+
 
 class Things(type):
     def __new__(meta, name, bases, class_dict):
@@ -77,27 +93,49 @@ class RecordManager:
         self.tag = tag
 
     def __call__(self, **slots):
-        return Record(uid, tag, **slots)
+        return Record(nanoid.generate(), self.tag, **slots)
 
     def all(self):
         # load all records with self.tag and return them as a list
-        pass
+        return FileBackedStorage.instance().find_all(self.tag)
 
     def find_one(self, **query):
         # return the first record with self.tag that matches query
-        pass
+        results = self.find_many(**query)
+        if not results:
+            return None
+        return results[0]
 
     def find_many(self, **query):
         # return all records with self.tag that match query
-        pass
+        return FileBackedStorage.instance().find_with_slots(self.tag, **query)
 
 
 class Record:
-    def new(self, uid, tag, **slots):
+    def __init__(self, uid, tag, **slots):
         self.uid = uid
         self.tag = tag
         self._initialize_slots(slots)
-        return self
+
+    @property
+    def filename(self):
+        return f'{self.tag}-{self.uid}.p'
+
+    def save(self):
+        serializable = {}
+        for slot_name, slot_value in self.__dict__.items():
+            serializable[slot_name] = slot_value
+
+            if isinstance(slot_value, Record):
+                slot_value.save()
+                serializable[slot_name] = f'#ref#:{slot_value.uid}'
+        FileBackedStorage.instance().write(self.filename, serializable)
+
+    def matches(self, **slots):
+        def is_match(slot):
+            name, value = slot
+            return hasattr(self, name) and getattr(self, name) == value
+        return all(is_match(slot) for slot in slots.items())
 
     def __eq__(self, other):
         if not isinstance(other, Record):
@@ -109,20 +147,18 @@ class Record:
             value = getattr(self, slot)
             return f'{slot}: {repr(value)}'
 
-        slots = ', '.join(show(slot) for slot in self.slots)
+        slots = ', '.join(
+            show(slot)
+            for slot
+            in self.__dict__.keys()
+            if slot not in ('tag', 'uid', 'updated_at'))
         return f'{self.tag}.({slots})'
 
     def _initialize_slots(self, slots):
         for slot_name, slot_value in slots.items():
-            self._initialize_slot(name, value)
+            self._initialize_slot(slot_name, slot_value)
 
     def _initialize_slot(self, name, value):
-        self.slots.append(name)
         setattr(self, name, value)
         setattr(self, 'updated_at', int(time.time() * 1000))
-        self._persist()
-
-    def _persist(self):
-        pathname = f'{STORE_DIR}/{self.tag}-{self.uid}.p'
-        with open(pathname, 'wb') as f:
-            pickle.dump(self.__dict__, f)
+        self.save()
