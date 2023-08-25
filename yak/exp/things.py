@@ -60,8 +60,8 @@ class FileBackedStorage:
         for k, v in loaded_data.items():
             slots[k] = v
 
-            if isinstance(v, str) and re.match('#ref#:', v):
-                uid = v.replace('#ref#:', '')
+            if isinstance(v, str) and re.match(Record.REFERENCE, v):
+                uid = v.replace(Record.REFERENCE, '')
                 record = self.read(uid)
                 slots[k] = record
         return Record(**slots)
@@ -112,6 +112,9 @@ class RecordManager:
 
 
 class Record:
+    PRIVATE_SLOTS = ('uid', 'tag', 'updated_at')
+    REFERENCE = '#ref#:'
+
     def __init__(self, uid, tag, **slots):
         self.uid = uid
         self.tag = tag
@@ -128,7 +131,7 @@ class Record:
 
             if isinstance(slot_value, Record):
                 slot_value.save()
-                serializable[slot_name] = f'#ref#:{slot_value.uid}'
+                serializable[slot_name] = f'{Record.REFERENCE}{slot_value.uid}'
         FileBackedStorage.instance().write(self.filename, serializable)
 
     def matches(self, **slots):
@@ -136,6 +139,14 @@ class Record:
             name, value = slot
             return hasattr(self, name) and getattr(self, name) == value
         return all(is_match(slot) for slot in slots.items())
+
+    def __setattr__(self, name, value):
+        self.__dict__[name] = value
+        self.__dict__['updated_at'] = int(time.time() * 1000)
+        if name in Record.PRIVATE_SLOTS:
+            return
+
+        self.save()
 
     def __eq__(self, other):
         if not isinstance(other, Record):
@@ -151,14 +162,9 @@ class Record:
             show(slot)
             for slot
             in self.__dict__.keys()
-            if slot not in ('tag', 'uid', 'updated_at'))
+            if slot not in Record.PRIVATE_SLOTS)
         return f'{self.tag}.({slots})'
 
     def _initialize_slots(self, slots):
         for slot_name, slot_value in slots.items():
-            self._initialize_slot(slot_name, slot_value)
-
-    def _initialize_slot(self, name, value):
-        setattr(self, name, value)
-        setattr(self, 'updated_at', int(time.time() * 1000))
-        self.save()
+            setattr(self, slot_name, slot_value)
